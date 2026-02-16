@@ -155,3 +155,15 @@ class TacticalAnalyzer:
 
         return score_home, score_away
 
+    def tactical_advice_from_Information_Base(self, my_team_row, opponent_row):
+        advice = []
+
+        if my_team_row is not None:
+            advice.append(f"{my_team_row['Formation']} → {my_team_row['Description']}")
+
+        # Matchup logic
+        if opponent_row is not None:
+            advice.append(f"Counter Formation for opponent's {opponent_row['Formation']} → {opponent_row['Counter Formations']}")
+
+        return advice
+

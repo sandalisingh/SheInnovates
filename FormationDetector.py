@@ -115,6 +115,8 @@ class FormationDetector:
 
         x_positions = players[:,0].reshape(-1,1)
 
+        x_positions = np.sort(x_positions, axis=0)
+
         print(f"DEBUG: X Positions for Clustering:\n{x_positions.flatten()}\n")
 
         # try 3 → 5 lines
@@ -140,9 +142,16 @@ class FormationDetector:
 
     # Convert cluster labels → formation pattern
     def line_signature(self, labels):
+        counts_dict = {}
 
-        counts = [np.sum(labels == i) for i in np.unique(labels)]
-        counts.sort(reverse=True)
+        for i in range(len(labels)):
+            label = labels[i]
+            counts_dict[label] = counts_dict.get(label, 0) + 1
+
+        counts = list(counts_dict.values())
+
+        # counts.sort(reverse=True)
+        print(f"DEBUG: Line Counts: {counts}")
 
         return "-".join(map(str, counts))
 
@@ -249,11 +258,7 @@ class FormationDetector:
             print("DEBUG: 11 player positions detected. Removing goalkeeper from analysis for tactical line detection.")
 
             # remove goalkeeper (deepest player)
-            if team_side == "left":
-                gk_index = np.argmin(coords[:,0])
-            else:
-                gk_index = np.argmax(coords[:,0])
-
+            gk_index = np.argmin(coords[:,0])
             coords = np.delete(coords, gk_index, axis=0)
 
         print(f"No of coords = {len(coords)}")
@@ -285,34 +290,7 @@ class FormationDetector:
         mode = self.detect_mode(coords)
 
         return pattern, mode, best_matching_formation
-  
-    # Tactical Advice Engine
-    def tactical_advice_from_Information_Base(self, formation_row, opponent_row):
-
-        if formation_row is None:
-            return [""]
-
-        advice = []
-
-        # Formation description
-        desc = formation_row["Description"]
-        advice.append(f"Style → {formation_row['Mode']}")
-
-        if isinstance(desc, str):
-            advice.append(desc.split(".")[0])
-
-        # Counter formations
-        counters = formation_row["Counter Formations"]
-        if isinstance(counters, str):
-            advice.append(f"Recommended Counters → {counters}")
-
-        # Matchup logic
-        if opponent_row is not None:
-            if formation_row["Formation Base"] == opponent_row["Formation Base"]:
-                advice.append("Mirror matchup → midfield battle expected")
-
-        return advice
-    
+   
     def generate_template_from_formation(self, formation, team_side="left", mode="balanced"):
         """
         Creates positions INCLUDING goalkeeper.
@@ -329,7 +307,6 @@ class FormationDetector:
         if len(matches) == 0:
             return None
 
-        lines = list(map(int, formation.split("-")))
         positions = []
 
         # 1. ADD GOALKEEPER FIRST

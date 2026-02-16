@@ -90,7 +90,7 @@ class InteractiveVoronoiPitch:
         self.height = 68
         self.bottom_panel_height = 25
 
-        self.analyzer = TacticalAnalyzer()
+        self.tactical_anaylzer = TacticalAnalyzer()
         
         # 2. Draw the static pitch IMMEDIATELY (so you don't see a blank screen)
         self.draw_pitch()
@@ -300,22 +300,32 @@ class InteractiveVoronoiPitch:
             )
 
         # TACTICAL ANALYSIS
+        space_data = self.tactical_anaylzer.analyze_space_control(self.away_coords)
+        vulnerabilities = self.tactical_anaylzer.identify_vulnerabilities(space_data)
+
+        # Annotate Vulnerabilities
+        if vulnerabilities:
+            text_str = "WEAKNESSES:\n" + "\n".join([v['detail'] for v in vulnerabilities[:3]])
+            props = dict(boxstyle='round', facecolor='black', alpha=0.8)
+            self.ax.text(0.02, 0.98, text_str, transform=self.ax.transAxes, fontsize=9,
+                    verticalalignment='top', color='red', bbox=props)
+            
         total = self.width * self.height
 
         home_control = (h_area / total) * 100 if total else 0
         away_control = (a_area / total) * 100 if total else 0
 
-        home_compact = self.analyzer.compactness(self.home_coords)
-        away_compact = self.analyzer.compactness(self.away_coords)
+        home_compact = self.tactical_anaylzer.compactness(self.home_coords)
+        away_compact = self.tactical_anaylzer.compactness(self.away_coords)
 
-        home_width = self.analyzer.width_usage(self.home_coords)
-        away_width = self.analyzer.width_usage(self.away_coords)
+        home_width = self.tactical_anaylzer.width_usage(self.home_coords)
+        away_width = self.tactical_anaylzer.width_usage(self.away_coords)
 
-        center_h, center_a = self.analyzer.central_control(
+        center_h, center_a = self.tactical_anaylzer.central_control(
             self.home_coords, self.away_coords
         )
 
-        over_h, over_a = self.analyzer.overload_score(
+        over_h, over_a = self.tactical_anaylzer.overload_score(
             self.home_coords, self.away_coords
         )
 
@@ -327,8 +337,7 @@ class InteractiveVoronoiPitch:
         home_form, _, home_row = self.formation_detector.detect_formation_from_player_positions(self.home_coords, team_side="left")
         away_form, _, away_row = self.formation_detector.detect_formation_from_player_positions(self.away_coords, team_side="right")
 
-        home_advice = self.formation_detector.tactical_advice_from_Information_Base(home_row, away_row)
-        away_advice = self.formation_detector.tactical_advice_from_Information_Base(away_row, home_row)
+        home_advice = self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row)
 
         home_mode = home_row['Mode'] if isinstance(home_row, pd.Series) else "Unknown"
         away_mode = away_row['Mode'] if isinstance(away_row, pd.Series) else "Unknown"
@@ -391,6 +400,21 @@ class InteractiveVoronoiPitch:
                 self.left_w + self.mid_w + pad_x,
                 top_y,
                 structure_text,
+                ha="left",
+                va="top",
+                fontsize=11,
+                linespacing=1.6,
+                wrap=True
+            )
+        )
+
+        info_text = "\n".join(self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row))
+
+        self.bottom_texts.append(
+            self.ax.text(
+                self.left_w +pad_x,
+                top_y + 60,
+                info_text,
                 ha="left",
                 va="top",
                 fontsize=11,
