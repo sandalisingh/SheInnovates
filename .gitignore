@@ -1,2 +1,88 @@
+# ===============================
+# Python
+# ===============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
 *env*
-Data/sportec_open
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# ===============================
+# Jupyter Notebooks
+# ===============================
+.ipynb_checkpoints/
+
+# ===============================
+# Data files (IMPORTANT)
+# ===============================
+# Ignore raw data files
+Data/*.csv
+Data/*.xlsx
+Data/*.json
+
+# But keep processed template/example files if needed
+!Data/README.md
+
+# ===============================
+# Logs
+# ===============================
+*.log
+
+# ===============================
+# OS files
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# IDE / Editor
+# ===============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===============================
+# Environment variables
+# ===============================
+.env
+.env.*
+*.env
+
+# ===============================
+# Coverage & Testing
+# ===============================
+htmlcov/
+.coverage
+.pytest_cache/
+
+# ===============================
+# Temporary files
+# ===============================
+*.tmp
+*.bak
+
+# ===============================
+# Mac specific
+# ===============================
+*.icloud
+
+# ===============================
+# Misc
+# ===============================
+*.sqlite3
+*.db
