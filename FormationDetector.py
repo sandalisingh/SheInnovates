@@ -177,7 +177,7 @@ class FormationDetector:
         gk_index = np.argmin(coords[:,0])
         coords = np.delete(coords, gk_index, axis=0)
 
-        print(f"No of coords = {len(coords)}")
+        # print(f"No of coords = {len(coords)}")
 
         # detect tactical lines
         labels = self.detect_lines(coords)

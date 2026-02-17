@@ -117,9 +117,7 @@ class FormationGenerator:
 
         depth_adjust = mode_shift.get(mode, 0.0)
 
-        # --------------------------------------------------
-        # 1️⃣ Group roles by depth line
-        # --------------------------------------------------
+        # Group roles by depth line
 
         line_groups = {}
 
@@ -142,9 +140,7 @@ class FormationGenerator:
 
             line_groups[depth_i].append((role, count))
 
-        # --------------------------------------------------
-        # 2️⃣ Build each tactical line dynamically
-        # --------------------------------------------------
+        # Build each tactical line dynamically
 
         for depth_i in sorted(line_groups.keys()):
 

@@ -58,37 +58,47 @@ ROLE_Left_Striker = "LS"
 ROLE_Right_Striker = "RS"
 
 ROLE_LIST = [
+
+    # Goalkeeper
     ROLE_Goalkeeper,
-    
+
+    # Defenders
     ROLE_Left_Center_Back,
     ROLE_Center_Back,
     ROLE_Right_Center_Back,
     ROLE_Left_Back,
     ROLE_Right_Back,
+    ROLE_Left_Wing_Back,
+    ROLE_Right_Wing_Back,
 
-    ROLE_Central_Midfielder,
-    ROLE_Left_Central_Midfielder,
-    ROLE_Right_Central_Midfielder,
-
-    ROLE_Central_Attacking_Midfielder,
-    ROLE_Left_Attacking_Midfielder,
-    ROLE_Right_Attacking_Midfielder,
-
+    # Defensive Midfield
     ROLE_Central_Defensive_Midfielder,
     ROLE_Left_Defensive_Midfielder,
     ROLE_Right_Defensive_Midfielder,
 
+    # Central Midfield
+    ROLE_Central_Midfielder,
+    ROLE_Left_Central_Midfielder,
+    ROLE_Right_Central_Midfielder,
+
+    # Attacking Midfield
+    ROLE_Central_Attacking_Midfielder,
+    ROLE_Left_Attacking_Midfielder,
+    ROLE_Right_Attacking_Midfielder,
+
+    # Wide Midfield / Wingers
     ROLE_Left_Midfielder,
     ROLE_Right_Midfielder,
+    ROLE_Left_Winger,
+    ROLE_Right_Winger,
 
-    ROLE_Left_Wing_Back,
-    ROLE_Right_Wing_Back,
-
+    # Forwards
     ROLE_Center_Forward,
     ROLE_Left_Forward,
     ROLE_Right_Forward,
 
+    # Strikers
     ROLE_Striker,
     ROLE_Left_Striker,
-    ROLE_Right_Striker 
+    ROLE_Right_Striker
 ]
