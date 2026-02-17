@@ -13,7 +13,8 @@ import Configurations as CF
 
 class VideoAnalyzer:
 
-    def __init__(self):
+    def __init__(self, video_path):
+        self.video_path = video_path
 
         self.device = self._get_device()
         print("Using Device:", self.device)
@@ -46,7 +47,7 @@ class VideoAnalyzer:
     def process_video(self):
         print("\nRunning Object Detector and Tracking...")
 
-        self.tracking_df = ObjectDetection()
+        self.tracking_df = ObjectDetection(self.video_path)
 
         if self.tracking_df is None or len(self.tracking_df) == 0:
             raise ValueError("‼️ Tracking dataframe is empty.")

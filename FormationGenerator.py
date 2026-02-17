@@ -244,7 +244,7 @@ class FormationGenerator:
             
             matches = form_info_df[
                 (form_info_df["Structure"] == "4-4-2") &
-                (form_info_df["Mode"] == CF.Mode.MIDFIELD)
+                (form_info_df["Mode"] == CF.Mode.MIDFIELD.value)
             ]
 
         formation_row = matches.iloc[0]
