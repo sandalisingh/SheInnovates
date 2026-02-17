@@ -110,9 +110,10 @@ class FormationGenerator:
 
         # Mode depth shifting
         mode_shift = {
-            CF.MODE_DEFENSIVE: -0.08,
+            CF.MODE_DEFENSIVE: -0.085,
+            CF.MODE_DEFENDING: -0.085,
             CF.MODE_BALANCED: 0.0,
-            CF.MODE_ATTACKING: 0.08
+            CF.MODE_ATTACKING: 0.1
         }
 
         depth_adjust = mode_shift.get(mode, 0.0)
@@ -186,19 +187,42 @@ class FormationGenerator:
     
     def generate_template_from_formation(
         self,
-        formation_name,
-        team_side="left",
-        mode=CF.MODE_BALANCED
+        formation_struct,
+        mode = CF.MODE_BALANCED,
+        shape = CF.SHAPE_NA,
+        team_side="left"
     ):
+        df = self.formation_info_df.copy()
+        
+        # Normalize strings for safety
+        formation_struct = str(formation_struct).strip()
+        mode = str(mode).strip()
+        shape = str(shape).strip()
 
-        matches = self.formation_info_df[
-            self.formation_info_df["Formation"] == formation_name
+        # Try Exact Match
+        matches = df[
+            (df["Structure"] == formation_struct) &
+            (df["Mode"] == mode) &
+            (df["Shape"] == shape)
         ]
 
+        # Ignore Shape
         if len(matches) == 0:
-            raise ValueError(f"Formation '{formation_name}' not found in CSV")
+            matches = df[
+                (df["Structure"] == formation_struct) &
+                (df["Mode"] == mode)
+            ]
+
+        # Ignore Mode (use basic formation)
+        if len(matches) == 0:
+            matches = df[
+                df["Structure"] == formation_struct
+            ]
 
         formation_row = matches.iloc[0]
+
+        # print("\n\nFormation = ")
+        # print(formation_row)
 
         template = self.build_template_from_csv_row(
             formation_row,

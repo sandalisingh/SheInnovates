@@ -122,48 +122,34 @@ class FormationDetector:
 
         return "-".join(map(str, counts))
 
-    # Detect attacking / defensive / balanced phase
-    def detect_mode(self, players, line_labels=None):
+    def detect_mode(self, players, line_labels=None, team_side="left"):
         """
-        Uses depth, compactness and line structure.
+        Advanced tactical phase detection.
+        Direction-aware + structure-aware.
         """
 
-        # Overall team depth
-        mean_depth = np.mean(players[:, 0])
+        players = players.copy()
 
-        # Defensive line depth (deepest 3 players)
-        sorted_x = np.sort(players[:, 0])
-        defensive_line_depth = np.mean(sorted_x[:3])
+        # Normalize direction so +X is always attacking
+        if team_side == "right":
+            players[:, 0] = 1 - players[:, 0]
 
-        # Forward line depth (highest 3 players)
-        attacking_line_depth = np.mean(sorted_x[-3:])
+        # --- Player distribution ---
+        midfield_line = 0.5
+        players_ahead = np.sum(players[:, 0] > midfield_line+0.02)
+        players_behind = np.sum(players[:, 0] < midfield_line-0.02)
 
-        # Team vertical stretch
-        stretch = np.max(players[:, 0]) - np.min(players[:, 0])
-
-        # -------------------------
-        # DECISION LOGIC
-        # -------------------------
-
-        # Very high line + stretched
-        if mean_depth > 0.6 and attacking_line_depth > 0.75:
+        if (
+            players_ahead > players_behind + 1
+        ):
             return CF.MODE_ATTACKING
 
-        # Very deep block
-        if mean_depth < 0.4 and defensive_line_depth < 0.25:
-            return CF.MODE_DEFENSIVE
+        if (
+            players_behind > players_ahead + 1
+        ):
+            return CF.MODE_DEFENDING
 
-        # Compact mid-block
-        if 0.4 <= mean_depth <= 0.6 and stretch < 0.55:
-            return CF.MODE_BALANCED
-
-        # Fallback
-        if mean_depth > 0.55:
-            return CF.MODE_ATTACKING
-        elif mean_depth < 0.45:
-            return CF.MODE_DEFENSIVE
-        else:
-            return CF.MODE_BALANCED
+        return CF.MODE_BALANCED
 
     # MAIN DETECTION FUNCTION
     def detect_formation_from_player_positions(self, team_coords, team_side="left"):
@@ -205,7 +191,7 @@ class FormationDetector:
                 best_score = diff_score_from_template
                 best_matching_formation = row
 
-        mode = self.detect_mode(coords, labels)
+        mode = self.detect_mode(coords, labels, team_side)
 
         return pattern, mode, best_matching_formation
    

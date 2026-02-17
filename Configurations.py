@@ -15,11 +15,60 @@ HOME_GK_COLOUR = "#0ff1b5"
 AWAY_PLAYER_COLOUR = '#e74c3c'
 AWAY_GK_COLOUR = '#e67e22'
 
-MODE_ATTACKING = "Attacking"
-MODE_DEFENSIVE = "Defensive"
-MODE_BALANCED = "Balanced"
-MODE_UNKNOWN = "Unknown"
+# -------------------------- FORMATION MODES --------------------------
 
+MODE_ATTACKING = "Attacking"
+MODE_DEFENDING = "Defending"
+MODE_MIDFIELD = "Midfield"
+MODE_HOLDING = "Holding"
+MODE_DEFENSIVE = "Defensive"  
+MODE_UNKNOWN = "Unknown"
+MODE_BALANCED = "Balanced"
+
+MODE_LIST = [
+    MODE_ATTACKING,
+    MODE_DEFENDING,
+    MODE_MIDFIELD,
+    MODE_HOLDING,
+    MODE_DEFENSIVE
+]
+
+# -------------------------- FORMATION SHAPES --------------------------
+
+SHAPE_NA = ""
+
+SHAPE_DIAMOND = "Diamond"
+SHAPE_FLAT = "Flat"
+SHAPE_NARROW = "Narrow"
+SHAPE_WIDE = "Wide"
+
+SHAPE_ATTACK = "Attack"
+SHAPE_DEFEND = "Defend"
+SHAPE_HOLDING = "Holding"
+SHAPE_FALSE_9 = "False 9"
+
+SHAPE_VARIANT_2 = "(2)"
+SHAPE_VARIANT_3 = "(3)"
+SHAPE_VARIANT_4 = "(4)"
+SHAPE_VARIANT_5 = "(5)"
+
+SHAPE_LIST = [
+    SHAPE_NA,
+    SHAPE_DIAMOND,
+    SHAPE_FLAT,
+    SHAPE_NARROW,
+    SHAPE_WIDE,
+    SHAPE_ATTACK,
+    SHAPE_DEFEND,
+    SHAPE_HOLDING,
+    SHAPE_FALSE_9,
+    SHAPE_VARIANT_2,
+    SHAPE_VARIANT_3,
+    SHAPE_VARIANT_4,
+    SHAPE_VARIANT_5
+]
+
+# -------------------------- PLAYER ROLES --------------------------
 ROLE_Goalkeeper = "GK"
 
 ROLE_Center_Back = "CB"

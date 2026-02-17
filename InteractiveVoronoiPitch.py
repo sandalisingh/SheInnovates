@@ -151,11 +151,14 @@ class InteractiveVoronoiPitch:
                     color="black", lw=1.5)
 
     def compute_voronoi(self):
-        # Robust Voronoi calculation
         try:
             all_points = np.vstack((self.home_coords, self.away_coords))
-            vor = Voronoi(all_points)
 
+            # ---- FIX: Jitter to avoid degenerate geometry ----
+            epsilon = 1e-6
+            all_points = all_points + np.random.uniform(-epsilon, epsilon, all_points.shape)
+
+            vor = Voronoi(all_points)
             regions, vertices = voronoi_finite_polygons_2d(vor)
 
         except Exception as e:
@@ -332,10 +335,10 @@ class InteractiveVoronoiPitch:
         home_text = (
             f"{CF.MY_TEAM_NAME}"  +
             f"\nFormation : {home_form_pattern}" + 
-            (f"\nMode : {home_mode}" if home_mode!="Unknown" else "") +
+            (f"\n({home_mode})" if home_mode!="Unknown" else "") +
             f"\n\n{CF.OPPONENT_TEAM_NAME}" +
             f"\nFormation : {away_form_pattern}" +
-            (f"\nMode : {away_mode}" if away_mode!="Unknown" else "")
+            (f"\n({away_mode})" if away_mode!="Unknown" else "")
         )
 
         self.bottom_texts.append(
