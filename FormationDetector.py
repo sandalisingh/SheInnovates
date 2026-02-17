@@ -35,7 +35,7 @@ class FormationDetector:
 
         # Heuristic: If Y is > 68 (standard width), it's likely a 0-100 scale
         if max_y > PITCH_WIDTH + 2: 
-            print("⚠️ Scaling Data detected! Converting 0-100 scale to Meters...")
+            # print("⚠️ Scaling Data detected! Converting 0-100 scale to Meters...")
             df = df.copy() # Avoid SettingWithCopyWarning
             
             # Normalize to 0-1
@@ -85,7 +85,7 @@ class FormationDetector:
 
         x_positions = np.sort(x_positions, axis=0)
 
-        print(f"DEBUG: X Positions for Clustering:\n{x_positions.flatten()}\n")
+        # print(f"DEBUG: X Positions for Clustering:\n{x_positions.flatten()}\n")
 
         # try 3 → 5 lines
         for k in range(3,6):
@@ -99,8 +99,8 @@ class FormationDetector:
             except:
                 score = -1
 
-            print(f"DEBUG: K={k} → Silhouette Score: {score:.4f}")
-            print(f"DEBUG: Cluster Labels for K={k} → {labels}\n")
+            # print(f"DEBUG: K={k} → Silhouette Score: {score:.4f}")
+            # print(f"DEBUG: Cluster Labels for K={k} → {labels}\n")
 
             if score > best_score:
                 best_score = score
@@ -118,7 +118,7 @@ class FormationDetector:
 
         counts = list(counts_dict.values())
 
-        print(f"DEBUG: Line Counts: {counts}")
+        # print(f"DEBUG: Line Counts: {counts}")
 
         return "-".join(map(str, counts))
 
@@ -140,12 +140,6 @@ class FormationDetector:
 
         # Team vertical stretch
         stretch = np.max(players[:, 0]) - np.min(players[:, 0])
-
-        print(f"DEBUG MODE:")
-        print(f"Mean Depth: {mean_depth:.3f}")
-        print(f"Defensive Line: {defensive_line_depth:.3f}")
-        print(f"Attacking Line: {attacking_line_depth:.3f}")
-        print(f"Stretch: {stretch:.3f}")
 
         # -------------------------
         # DECISION LOGIC
@@ -179,18 +173,9 @@ class FormationDetector:
         if team_side == "right":
             coords[:,0] = 1 - coords[:,0]
 
-        if len(coords) < 10:
-            print("⚠️ Warning: Less than 10 player positions detected.")
-            return "Unknown", "Unknown", None
-        elif len(coords) > 11:
-            print("⚠️ Warning: More than 11 player positions detected. Extra players will be ignored for formation detection.")
-            coords = coords[:11]
-        elif len(coords) == 11:
-            print("DEBUG: 11 player positions detected. Removing goalkeeper from analysis for tactical line detection.")
-
-            # remove goalkeeper (deepest player)
-            gk_index = np.argmin(coords[:,0])
-            coords = np.delete(coords, gk_index, axis=0)
+        # remove goalkeeper (deepest player)
+        gk_index = np.argmin(coords[:,0])
+        coords = np.delete(coords, gk_index, axis=0)
 
         print(f"No of coords = {len(coords)}")
 

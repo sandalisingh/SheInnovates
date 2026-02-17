@@ -29,45 +29,73 @@ class FormationGenerator:
         }
 
         # role columns used for template matching
-        self.role_columns = [
-            "LCB", # Left Center Back
-            "CB", # Center Back
-            "RCB", # Right Center Back
-            "LB", # Left Back
-            "RB", # Right Back
-            "CDM", # Defensive Midfielder
-            "CM", # Central Midfielder
-            "CAM", # Central Attacking Midfielder
-            "LM", # Left Midfielder
-            "RM", # Right Midfielder
-            "LW", # Left Winger
-            "RW", # Right Winger
-            "ST", # Striker
-            "CF", # Center Forward
-            "LS", # Left Striker
-            "RS"  # Right Striker
-        ]
+        self.role_columns = CF.ROLE_LIST
 
         self.role_columns = [
-            c for c in self.role_columns if c in self.formation_info_df.columns
+            c for c in self.role_columns
+            if c in self.formation_info_df.columns
+            and c != CF.ROLE_Goalkeeper
         ]
 
-        # lateral meaning of role (LEFT / CENTER / RIGHT)
-        self.role_lateral_bias = {
-            "LB": -1, "LCB": -0.5, "CB": 0,
-            "RCB": 0.5, "RB": 1,
+        # 5x5 Tactical Grid (normalized)
+        # Keep everyone before penalty area
+        self.depth_grid = np.array([
+            0.20,  # DEF
+            0.35,  # LOW MID
+            0.50,  # MID
+            0.65,  # HIGH MID
+            0.80   # ATT (before penalty box)
+        ])
 
-            "LM": -1, "LCM": -0.4, "CM": 0,
-            "RCM": 0.4, "RM": 1,
+        self.width_grid = np.array([
+            0.15,
+            0.325,
+            0.50,
+            0.675,
+            0.85
+        ])
 
-            "LW": -1, "RW": 1,
+        # Role → (depth_index, width_index)
+        self.role_zone_map = {
+            # DEF LINE
+            CF.ROLE_Left_Back: (0, 0),
+            CF.ROLE_Left_Center_Back: (0, 1),
+            CF.ROLE_Center_Back: (0, 2),
+            CF.ROLE_Right_Center_Back: (0, 3),
+            CF.ROLE_Right_Back: (0, 4),
 
-            "LAM": -0.5, "CAM": 0, "RAM": 0.5,
+            # DEF MID
+            CF.ROLE_Left_Defensive_Midfielder: (1, 1),
+            CF.ROLE_Central_Defensive_Midfielder: (1, 2),
+            CF.ROLE_Right_Defensive_Midfielder: (1, 3),
 
-            "LS": -0.4, "ST": 0, "RS": 0.4,
-            "CF": 0,
+            # MID
+            CF.ROLE_Left_Midfielder: (2, 0),
+            CF.ROLE_Left_Central_Midfielder : (2, 1),
+            CF.ROLE_Central_Midfielder : (2, 2),
+            CF.ROLE_Right_Central_Midfielder: (2, 3),
+            CF.ROLE_Right_Midfielder: (2, 4),
 
-            "LWB": -1, "RWB": 1,
+            # ATT MID
+            CF.ROLE_Left_Attacking_Midfielder: (3, 1),
+            CF.ROLE_Central_Attacking_Midfielder: (3, 2),
+            CF.ROLE_Right_Attacking_Midfielder: (3, 3),
+
+            # WINGS
+            CF.ROLE_Left_Winger: (4, 0),
+            CF.ROLE_Left_Forward: (4, 1),
+            CF.ROLE_Center_Forward: (4, 2),
+            CF.ROLE_Right_Forward: (4, 3),
+            CF.ROLE_Right_Winger: (4, 4),
+
+            # STRIKERS
+            CF.ROLE_Left_Striker: (4, 1),
+            CF.ROLE_Striker: (4, 2),
+            CF.ROLE_Right_Striker: (4, 3),
+
+            # Wingbacks
+            CF.ROLE_Left_Wing_Back: (1, 0),
+            CF.ROLE_Right_Wing_Back: (1, 4),
         }
 
     def extract_structure(self, formation_name):
@@ -76,22 +104,24 @@ class FormationGenerator:
         except:
             return []
 
-    # Create template positions from CSV row
-    def build_template_for_formation_info(self, formation_row):
+    def build_template_from_csv_row(self, formation_row, mode=CF.MODE_BALANCED):
 
-        formation_name = formation_row["Formation"]
-        structure = self.extract_structure(formation_name)
+        template = []
 
-        if len(structure) == 0:
-            return np.array([])
+        # Mode depth shifting
+        mode_shift = {
+            CF.MODE_DEFENSIVE: -0.08,
+            CF.MODE_BALANCED: 0.0,
+            CF.MODE_ATTACKING: 0.08
+        }
 
-        # defensive → attacking depths from structure
-        x_levels = np.linspace(0.25, 0.85, len(structure))
+        depth_adjust = mode_shift.get(mode, 0.0)
 
-        # -------- collect players by line ----------
-        lines = [[] for _ in structure]
+        # --------------------------------------------------
+        # 1️⃣ Group roles by depth line
+        # --------------------------------------------------
 
-        role_counts = {}
+        line_groups = {}
 
         for role in self.role_columns:
 
@@ -99,76 +129,50 @@ class FormationGenerator:
                 continue
 
             count = int(formation_row[role])
-            if count == 0:
+            if count <= 0:
                 continue
 
-            role_counts[role] = count
-
-        # assign roles sequentially to structure lines
-        role_list = []
-        for role, count in role_counts.items():
-            role_list += [role] * count
-
-        idx = 0
-        for line_i, line_size in enumerate(structure):
-            lines[line_i] = role_list[idx:idx+line_size]
-            idx += line_size
-
-        template = []
-
-        # -------- build coordinates ----------
-        for line_i, roles in enumerate(lines):
-
-            x = x_levels[line_i]
-
-            if len(roles) == 0:
+            if role not in self.role_zone_map:
                 continue
 
-            # structural spacing
-            base_y = np.linspace(0.1, 0.9, len(roles))
+            depth_i, _ = self.role_zone_map[role]
 
-            for i, role in enumerate(roles):
+            if depth_i not in line_groups:
+                line_groups[depth_i] = []
 
-                y = base_y[i]
+            line_groups[depth_i].append((role, count))
 
-                # apply semantic role bias
-                bias = self.role_lateral_bias.get(role, 0)
+        # --------------------------------------------------
+        # 2️⃣ Build each tactical line dynamically
+        # --------------------------------------------------
 
-                y += bias * 0.08   # strength of role positioning
+        for depth_i in sorted(line_groups.keys()):
 
-                y = np.clip(y, 0.05, 0.95)
+            roles = line_groups[depth_i]
 
-                template.append([x, y])
+            total_players_line = sum(count for _, count in roles)
 
-        return np.array(template, dtype=float)
+            base_x = self.depth_grid[depth_i] + depth_adjust
 
-    def build_template_from_formation_name(self, formation_name):
-        structure = self.extract_structure(formation_name)
+            # Dynamically center players across pitch width
+            width_positions = np.linspace(0.15, 0.85, total_players_line)
 
-        if len(structure) == 0:
-            return np.array([])
+            idx = 0
 
-        # defensive → attacking spacing
-        x_levels = np.linspace(0.25, 0.85, len(structure))
+            for role, count in roles:
+                for _ in range(count):
 
-        template = []
+                    y = width_positions[idx]
 
-        for line_i, players_in_line in enumerate(structure):
-
-            x = x_levels[line_i]
-
-            # evenly distribute across pitch width
-            y_positions = np.linspace(0.1, 0.9, players_in_line)
-
-            for y in y_positions:
-                template.append([x, y])
+                    template.append([base_x, y])
+                    idx += 1
 
         return np.array(template, dtype=float)
 
     # Compare real players to formation template
     def compare_to_template(self, players, formation_row):
 
-        template = self.build_template_for_formation_info(formation_row)
+        template = self.build_template_from_csv_row(formation_row)
 
         if len(template) == 0:
             return 1e9
@@ -188,53 +192,44 @@ class FormationGenerator:
         self,
         formation_name,
         team_side="left",
-        mode="balanced"
+        mode=CF.MODE_BALANCED
     ):
 
         matches = self.formation_info_df[
             self.formation_info_df["Formation"] == formation_name
         ]
 
-        print(f"Matching formation '{formation_name}': ")
-        print(matches)
-
         if len(matches) == 0:
-            # fallback structural generation
-            template = self.build_template_from_formation_name(formation_name)
-        else:
-            formation_row = matches.iloc[0]
-            print("Using formation info from CSV:")
-            print(formation_row)
-            template = self.build_template_for_formation_info(formation_row)
+            raise ValueError(f"Formation '{formation_name}' not found in CSV")
 
-        print("Template:")
-        print(template)
+        formation_row = matches.iloc[0]
 
-        # -------- MODE ADJUSTMENTS ----------
-        if CF.MODE_DEFENSIVE in mode == CF.MODE_DEFENSIVE:
-            template[:,0] -= 0.05
-            template[:,1] = 0.5 + (template[:,1]-0.5)*0.75
+        template = self.build_template_from_csv_row(
+            formation_row,
+            mode
+        )
 
-        elif CF.MODE_ATTACKING in mode:
-            template[:,0] += 0.05
-            template[:,1] = 0.5 + (template[:,1]-0.5)*1.15
+        # Clip bounds
+        template[:,0] = np.clip(template[:,0], 0.05, 0.95)
+        template[:,1] = np.clip(template[:,1], 0.05, 0.95)
 
-        # -------- flip side ----------
+        # Flip side
         if team_side == "right":
             template[:,0] = 1 - template[:,0]
 
-        # -------- ADD GOALKEEPER (normalized coordinates) ----------
-        if team_side == "left":
-            gk_x = 0.035          # ≈ 3.5m / 105m
-        else:
-            gk_x = 0.965          # symmetric position
-
-        gk_y = 0.5                # center width
-
-        template = np.vstack(([gk_x, gk_y], template))
-
-        # -------- scale to pitch ----------
+        # Scale to pitch
         template[:,0] *= CF.PITCH_LENGTH
         template[:,1] *= CF.PITCH_WIDTH
 
-        return template           
+        # Add GK
+        if team_side == "left":
+            gk_x = 0.035
+        else:
+            gk_x = 0.965
+
+        gk = np.array([[gk_x * CF.PITCH_LENGTH,
+                        0.5 * CF.PITCH_WIDTH]])
+
+        template = np.vstack((gk, template))
+
+        return template

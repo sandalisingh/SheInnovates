@@ -157,13 +157,18 @@ class TacticalAnalyzer:
 
     def tactical_advice_from_Information_Base(self, my_team_row, opponent_row):
         advice = []
+        counter_formations = []
 
-        if my_team_row is not None:
-            advice.append(f"{my_team_row['Formation']} → {my_team_row['Description']}")
+        # if my_team_row is not None:
+        #     advice.append(f"{my_team_row['Formation']} → {my_team_row['Description']}")
 
         # Matchup logic
         if opponent_row is not None:
-            advice.append(f"Counter Formation for opponent's {opponent_row['Formation']} → {opponent_row['Counter Formations']}")
+            counter_str = opponent_row.get("Counter Formations", "")
 
-        return advice
+            if isinstance(counter_str, str) and counter_str.strip():
+                counters = [c.strip() for c in counter_str.split("/")]
+                counter_formations.extend(counters)   # ← FIX: use extend instead of append
+
+        return advice, counter_formations
 

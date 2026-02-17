@@ -73,7 +73,7 @@ class InteractiveVoronoiPitch:
         # Dimensions
         self.width = 105
         self.height = 68
-        self.bottom_panel_height = 25
+        self.bottom_panel_height = 30
 
         self.tactical_anaylzer = TacticalAnalyzer()
         
@@ -114,7 +114,7 @@ class InteractiveVoronoiPitch:
         self.ax.axis('off')
         
         # Green background
-        self.ax.add_patch(Rectangle((0, 0), self.width, self.height, color='#2ecc71', zorder=0))
+        self.ax.add_patch(Rectangle((0, 0), self.width, self.height, color=CF.PITCH_COLOUR, zorder=0))
         
         # White lines
         line_props = {'linewidth': 2, 'color': 'white', 'zorder': 1}
@@ -322,7 +322,7 @@ class InteractiveVoronoiPitch:
         home_form_pattern, home_mode, home_row = self.formation_detector.detect_formation_from_player_positions(self.home_coords, team_side="left")
         away_form_pattern, away_mode, away_row = self.formation_detector.detect_formation_from_player_positions(self.away_coords, team_side="right")
 
-        # home_advice = self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row)
+        home_advice, counter_formations = self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row)
 
         # ---- FORMATIONS ----
         pad_x = 2
@@ -350,12 +350,17 @@ class InteractiveVoronoiPitch:
             )
         )
 
+        counter_formations = "\n".join(counter_formations)
+
         # ---- METRICS ----
         control_text = (
-            "CONTROL\n"
+            "Control\n"
             f"{CF.MY_TEAM_NAME}  : {home_control:.1f}%\n"
             f"{CF.OPPONENT_TEAM_NAME}  : {away_control:.1f}%"
         )
+
+        if counter_formations:
+            control_text += f"\n\nCounter with\n{counter_formations}"
 
         self.bottom_texts.append(
             self.ax.text(
@@ -370,7 +375,7 @@ class InteractiveVoronoiPitch:
         )
 
         structure_text = (
-            "STRUCTURE\n"
+            "Structure\n"
             f"Compactness : {compactness}\n"
             f"Width : {width_analysis}\n"
             f"Central : {central_control}\n"
