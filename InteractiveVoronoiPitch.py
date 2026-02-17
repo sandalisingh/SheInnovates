@@ -136,8 +136,8 @@ class InteractiveVoronoiPitch:
 
         self.ax.add_patch(self.bottom_panel)
 
-        self.left_w = self.width * 0.35
-        self.mid_w  = self.width * 0.2
+        self.left_w = self.width * 0.3
+        self.mid_w  = self.width * 0.25
         self.right_w = self.width * 0.45
 
         # vertical separators
@@ -162,7 +162,7 @@ class InteractiveVoronoiPitch:
             regions, vertices = voronoi_finite_polygons_2d(vor)
 
         except Exception as e:
-            print(f"Math Error: {e}")
+            print(f"⚠️ Math Error: {e}")
             return [], 0, 0
 
         regions_polys = []
@@ -378,11 +378,10 @@ class InteractiveVoronoiPitch:
         )
 
         structure_text = (
-            "Structure\n"
-            f"Compactness : {compactness}\n"
-            f"Width : {width_analysis}\n"
-            f"Central : {central_control}\n"
-            f"Overloads : {overloads}"
+            f"Compactness -\n{compactness}\n"
+            f"Width -\n{width_analysis}\n"
+            f"Central -\n{central_control}\n"
+            f"Overloads -\n{overloads}"
         )
 
         self.bottom_texts.append(

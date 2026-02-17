@@ -19,7 +19,7 @@ class FormationDetector:
 
         else:
             raise ValueError(
-                "FormationDetector expects CSV path or pandas DataFrame"
+                "‼️ FormationDetector expects CSV path or pandas DataFrame"
             )
 
     def scale_data_to_pitch(self, df):
@@ -34,7 +34,7 @@ class FormationDetector:
         # print(f"DEBUG: Data Range found -> X_max: {max_x:.1f}, Y_max: {max_y:.1f}")
 
         # Heuristic: If Y is > 68 (standard width), it's likely a 0-100 scale
-        if max_y > PITCH_WIDTH + 2: 
+        if max_y > CF.PITCH_WIDTH + 2: 
             # print("⚠️ Scaling Data detected! Converting 0-100 scale to Meters...")
             df = df.copy() # Avoid SettingWithCopyWarning
             
@@ -43,8 +43,8 @@ class FormationDetector:
             df['Y'] = df['Y'] / 100.0
             
             # Scale to Meters (105 x 68)
-            df['X'] = df['X'] * PITCH_LENGTH
-            df['Y'] = df['Y'] * PITCH_WIDTH
+            df['X'] = df['X'] * CF.PITCH_LENGTH
+            df['Y'] = df['Y'] * CF.PITCH_WIDTH
             
         return df
 
@@ -142,14 +142,14 @@ class FormationDetector:
         if (
             players_ahead > players_behind + 1
         ):
-            return CF.MODE_ATTACKING
+            return CF.Mode.ATTACKING.value
 
         if (
             players_behind > players_ahead + 1
         ):
-            return CF.MODE_DEFENDING
+            return CF.Mode.DEFENDING.value
 
-        return CF.MODE_BALANCED
+        return CF.Mode.BALANCED.value
 
     # MAIN DETECTION FUNCTION
     def detect_formation_from_player_positions(self, team_coords, team_side="left"):
@@ -176,7 +176,7 @@ class FormationDetector:
         ]
 
         if len(matches) == 0:
-            return pattern, "Unknown", None
+            return pattern, CF.Mode.BALANCED.value, None
 
         # spatial comparison
         best_matching_formation = None

@@ -5,8 +5,8 @@ import Configurations as CF
 
 formationGenerator = FormationGenerator()
 
-team_A = formationGenerator.generate_template_from_formation(formation_struct="5-3-2", team_side="left", mode="Midfield", shape="Flat")
-team_B = formationGenerator.generate_template_from_formation(formation_struct="4-3-1-2", team_side="right", mode="Defending", shape="")
+team_A = formationGenerator.generate_template_from_formation(formation_struct=CF.Formation.F_5_3_2, team_side="left", mode=CF.Mode.MIDFIELD, shape=CF.Shape.FLAT)
+team_B = formationGenerator.generate_template_from_formation(formation_struct=CF.Formation.F_4_3_1_2, team_side="right", mode=CF.Mode.DEFENDING, shape=CF.Shape.NA)
 
 app = InteractiveVoronoiPitch(team_A, team_B)
 plt.show()

@@ -1,8 +1,13 @@
+from enum import Enum
+
 # -------------------------- PATHS --------------------------
 YOLO_MODEL_PATH = "Models/best_object_detection_model.pt"
 FORMATIONS_INFO_DB = "Data/Formations_info_transformed.csv"
 
 # -------------------------- OBJECT DETECTION --------------------------
+
+MY_TEAM_NAME = "Home"
+OPPONENT_TEAM_NAME = "Away"
 
 IP_VID_PATH_OBJ_DET = "Data/Raw/input_video_obj_det.mp4"
 OP_VID_PATH_OBJ_DET = "Data/Raw/output_video_obj_det.mp4"
@@ -32,148 +37,118 @@ PITCH_COLOUR = "#358751"
 
 AREA_CAPTURE_MIN_THRESHOLD = 550 # in m^2
 
-MY_TEAM_NAME = "Home"
-OPPONENT_TEAM_NAME = "Away"
-
 HOME_PLAYER_COLOUR = '#3498db'
 HOME_GK_COLOUR = "#0ff1b5"
 
 AWAY_PLAYER_COLOUR = '#e74c3c'
 AWAY_GK_COLOUR = '#e67e22'
 
+# -------------------------- FORMATION STRUCTURES --------------------------
+
+class Formation(Enum):
+
+    # 3 at the back
+    F_3_1_4_2 = "3-1-4-2"
+    F_3_4_1_2 = "3-4-1-2"
+    F_3_4_2_1 = "3-4-2-1"
+    F_3_4_3   = "3-4-3"
+    F_3_5_1_1 = "3-5-1-1"
+    F_3_5_2   = "3-5-2"
+
+    # 4 at the back
+    F_4_1_2_1_2 = "4-1-2-1-2"
+    F_4_1_3_2   = "4-1-3-2"
+    F_4_1_4_1   = "4-1-4-1"
+    F_4_2_2_2   = "4-2-2-2"
+    F_4_2_3_1   = "4-2-3-1"
+    F_4_2_4     = "4-2-4"
+    F_4_3_1_2   = "4-3-1-2"
+    F_4_3_2_1   = "4-3-2-1"
+    F_4_3_3     = "4-3-3"
+    F_4_4_1_1   = "4-4-1-1"
+    F_4_4_2     = "4-4-2"
+    F_4_5_1     = "4-5-1"
+
+    # 5 at the back
+    F_5_2_1_2 = "5-2-1-2"
+    F_5_2_2_1 = "5-2-2-1"
+    F_5_2_3   = "5-2-3"
+    F_5_3_2   = "5-3-2"
+    F_5_4_1   = "5-4-1"
+
 # -------------------------- FORMATION MODES --------------------------
 
-MODE_ATTACKING = "Attacking"
-MODE_DEFENDING = "Defending"
-MODE_MIDFIELD = "Midfield"
-MODE_HOLDING = "Holding"
-MODE_DEFENSIVE = "Defensive"  
-MODE_UNKNOWN = "Unknown"
-MODE_BALANCED = "Balanced"
-
-MODE_LIST = [
-    MODE_ATTACKING,
-    MODE_DEFENDING,
-    MODE_MIDFIELD,
-    MODE_HOLDING,
-    MODE_DEFENSIVE
-]
+class Mode(Enum):
+    ATTACKING = "Attacking"
+    DEFENDING = "Defending"
+    MIDFIELD  = "Midfield"
+    HOLDING   = "Holding"
+    DEFENSIVE = "Defensive"
+    BALANCED  = "Balanced"
+    UNKNOWN   = "Unknown"
 
 # -------------------------- FORMATION SHAPES --------------------------
 
-SHAPE_NA = ""
-
-SHAPE_DIAMOND = "Diamond"
-SHAPE_FLAT = "Flat"
-SHAPE_NARROW = "Narrow"
-SHAPE_WIDE = "Wide"
-
-SHAPE_ATTACK = "Attack"
-SHAPE_DEFEND = "Defend"
-SHAPE_HOLDING = "Holding"
-SHAPE_FALSE_9 = "False 9"
-
-SHAPE_VARIANT_2 = "(2)"
-SHAPE_VARIANT_3 = "(3)"
-SHAPE_VARIANT_4 = "(4)"
-SHAPE_VARIANT_5 = "(5)"
-
-SHAPE_LIST = [
-    SHAPE_NA,
-    SHAPE_DIAMOND,
-    SHAPE_FLAT,
-    SHAPE_NARROW,
-    SHAPE_WIDE,
-    SHAPE_ATTACK,
-    SHAPE_DEFEND,
-    SHAPE_HOLDING,
-    SHAPE_FALSE_9,
-    SHAPE_VARIANT_2,
-    SHAPE_VARIANT_3,
-    SHAPE_VARIANT_4,
-    SHAPE_VARIANT_5
-]
+class Shape(Enum):
+    NA        = ""
+    DIAMOND   = "Diamond"
+    FLAT      = "Flat"
+    NARROW    = "Narrow"
+    WIDE      = "Wide"
+    ATTACK    = "Attack"
+    DEFEND    = "Defend"
+    HOLDING   = "Holding"
+    FALSE_9   = "False 9"
+    VARIANT_2 = "(2)"
+    VARIANT_3 = "(3)"
+    VARIANT_4 = "(4)"
+    VARIANT_5 = "(5)"
 
 # -------------------------- PLAYER ROLES --------------------------
-ROLE_Goalkeeper = "GK"
 
-ROLE_Center_Back = "CB"
-ROLE_Left_Center_Back = "LCB"
-ROLE_Right_Center_Back = "RCB"
-ROLE_Left_Back = "LB"
-ROLE_Right_Back = "RB"
 
-ROLE_Central_Midfielder = "CM"
-ROLE_Left_Central_Midfielder = "LCM"
-ROLE_Right_Central_Midfielder = "RCM"
-
-ROLE_Left_Midfielder = "LM"
-ROLE_Right_Midfielder = "RM"
-
-ROLE_Central_Attacking_Midfielder = "CAM"
-ROLE_Left_Attacking_Midfielder = "LAM"
-ROLE_Right_Attacking_Midfielder = "RAM"
-
-ROLE_Central_Defensive_Midfielder = "CDM"
-ROLE_Left_Defensive_Midfielder = "LDM"
-ROLE_Right_Defensive_Midfielder = "RDM"
-
-ROLE_Left_Winger= "LW"
-ROLE_Right_Winger = "RW"
-
-ROLE_Left_Wing_Back= "LWB"
-ROLE_Right_Wing_Back = "RWB"
-
-ROLE_Center_Forward = "CF"
-ROLE_Left_Forward = "LF"
-ROLE_Right_Forward = "RF"
-
-ROLE_Striker = "ST"
-ROLE_Left_Striker = "LS"
-ROLE_Right_Striker = "RS"
-
-ROLE_LIST = [
-
+class Role(Enum):
     # Goalkeeper
-    ROLE_Goalkeeper,
+    Goalkeeper = "GK"
 
     # Defenders
-    ROLE_Left_Center_Back,
-    ROLE_Center_Back,
-    ROLE_Right_Center_Back,
-    ROLE_Left_Back,
-    ROLE_Right_Back,
-    ROLE_Left_Wing_Back,
-    ROLE_Right_Wing_Back,
+    Left_Center_Back = "LCB"
+    Center_Back = "CB"
+    Right_Center_Back = "RCB"
+    Left_Back = "LB"
+    Right_Back = "RB"
+    Left_Wing_Back = "LWB"
+    Right_Wing_Back = "RWB"
 
     # Defensive Midfield
-    ROLE_Central_Defensive_Midfielder,
-    ROLE_Left_Defensive_Midfielder,
-    ROLE_Right_Defensive_Midfielder,
+    Central_Defensive_Midfielder = "CDM"
+    Left_Defensive_Midfielder = "LDM"
+    Right_Defensive_Midfielder = "RDM"
 
     # Central Midfield
-    ROLE_Central_Midfielder,
-    ROLE_Left_Central_Midfielder,
-    ROLE_Right_Central_Midfielder,
+    Central_Midfielder = "CM"
+    Left_Central_Midfielder = "LCM"
+    Right_Central_Midfielder = "RCM"
 
     # Attacking Midfield
-    ROLE_Central_Attacking_Midfielder,
-    ROLE_Left_Attacking_Midfielder,
-    ROLE_Right_Attacking_Midfielder,
+    Central_Attacking_Midfielder = "CAM"
+    Left_Attacking_Midfielder = "LAM"
+    Right_Attacking_Midfielder = "RAM"
 
     # Wide Midfield / Wingers
-    ROLE_Left_Midfielder,
-    ROLE_Right_Midfielder,
-    ROLE_Left_Winger,
-    ROLE_Right_Winger,
+    Left_Midfielder = "LM"
+    Right_Midfielder = "RM"
+    Left_Winger = "LW"
+    Right_Winger = "RW"
 
     # Forwards
-    ROLE_Center_Forward,
-    ROLE_Left_Forward,
-    ROLE_Right_Forward,
+    Center_Forward = "CF"
+    Left_Forward = "LF"
+    Right_Forward = "RF"
 
     # Strikers
-    ROLE_Striker,
-    ROLE_Left_Striker,
-    ROLE_Right_Striker
-]
+    Striker = "ST"
+    Left_Striker = "LS"
+    Right_Striker = "RS"
+
+ROLE_LIST = list(Role)

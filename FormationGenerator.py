@@ -17,7 +17,7 @@ class FormationGenerator:
 
         else:
             raise ValueError(
-                "FormationDetector expects CSV path or pandas DataFrame"
+                "‼️ FormationDetector expects CSV path or pandas DataFrame"
             )
 
         self.depth_levels = {
@@ -29,12 +29,11 @@ class FormationGenerator:
         }
 
         # role columns used for template matching
-        self.role_columns = CF.ROLE_LIST
-
         self.role_columns = [
-            c for c in self.role_columns
-            if c in self.formation_info_df.columns
-            and c != CF.ROLE_Goalkeeper
+            role
+            for role in CF.Role
+            if role != CF.Role.Goalkeeper
+            and role.value in self.formation_info_df.columns
         ]
 
         # 5x5 Tactical Grid (normalized)
@@ -58,44 +57,44 @@ class FormationGenerator:
         # Role → (depth_index, width_index)
         self.role_zone_map = {
             # DEF LINE
-            CF.ROLE_Left_Back: (0, 0),
-            CF.ROLE_Left_Center_Back: (0, 1),
-            CF.ROLE_Center_Back: (0, 2),
-            CF.ROLE_Right_Center_Back: (0, 3),
-            CF.ROLE_Right_Back: (0, 4),
+            CF.Role.Left_Back: (0, 0),
+            CF.Role.Left_Center_Back: (0, 1),
+            CF.Role.Center_Back: (0, 2),
+            CF.Role.Right_Center_Back: (0, 3),
+            CF.Role.Right_Back: (0, 4),
 
             # DEF MID
-            CF.ROLE_Left_Defensive_Midfielder: (1, 1),
-            CF.ROLE_Central_Defensive_Midfielder: (1, 2),
-            CF.ROLE_Right_Defensive_Midfielder: (1, 3),
+            CF.Role.Left_Defensive_Midfielder: (1, 1),
+            CF.Role.Central_Defensive_Midfielder: (1, 2),
+            CF.Role.Right_Defensive_Midfielder: (1, 3),
 
             # MID
-            CF.ROLE_Left_Midfielder: (2, 0),
-            CF.ROLE_Left_Central_Midfielder : (2, 1),
-            CF.ROLE_Central_Midfielder : (2, 2),
-            CF.ROLE_Right_Central_Midfielder: (2, 3),
-            CF.ROLE_Right_Midfielder: (2, 4),
+            CF.Role.Left_Midfielder: (2, 0),
+            CF.Role.Left_Central_Midfielder : (2, 1),
+            CF.Role.Central_Midfielder : (2, 2),
+            CF.Role.Right_Central_Midfielder: (2, 3),
+            CF.Role.Right_Midfielder: (2, 4),
 
             # ATT MID
-            CF.ROLE_Left_Attacking_Midfielder: (3, 1),
-            CF.ROLE_Central_Attacking_Midfielder: (3, 2),
-            CF.ROLE_Right_Attacking_Midfielder: (3, 3),
+            CF.Role.Left_Attacking_Midfielder: (3, 1),
+            CF.Role.Central_Attacking_Midfielder: (3, 2),
+            CF.Role.Right_Attacking_Midfielder: (3, 3),
 
             # WINGS
-            CF.ROLE_Left_Winger: (4, 0),
-            CF.ROLE_Left_Forward: (4, 1),
-            CF.ROLE_Center_Forward: (4, 2),
-            CF.ROLE_Right_Forward: (4, 3),
-            CF.ROLE_Right_Winger: (4, 4),
+            CF.Role.Left_Winger: (4, 0),
+            CF.Role.Left_Forward: (4, 1),
+            CF.Role.Center_Forward: (4, 2),
+            CF.Role.Right_Forward: (4, 3),
+            CF.Role.Right_Winger: (4, 4),
 
             # STRIKERS
-            CF.ROLE_Left_Striker: (4, 1),
-            CF.ROLE_Striker: (4, 2),
-            CF.ROLE_Right_Striker: (4, 3),
+            CF.Role.Left_Striker: (4, 1),
+            CF.Role.Striker: (4, 2),
+            CF.Role.Right_Striker: (4, 3),
 
             # Wingbacks
-            CF.ROLE_Left_Wing_Back: (1, 0),
-            CF.ROLE_Right_Wing_Back: (1, 4),
+            CF.Role.Left_Wing_Back: (1, 0),
+            CF.Role.Right_Wing_Back: (1, 4),
         }
 
     def extract_structure(self, formation_name):
@@ -104,16 +103,18 @@ class FormationGenerator:
         except:
             return []
 
-    def build_template_from_csv_row(self, formation_row, mode=CF.MODE_BALANCED):
+    def build_template_from_csv_row(self, formation_row, mode=CF.Mode.BALANCED):
+        if formation_row is None:
+            raise ValueError(f"‼️ [ERROR] Formation row is empty!")
 
         template = []
 
         # Mode depth shifting
         mode_shift = {
-            CF.MODE_DEFENSIVE: -0.085,
-            CF.MODE_DEFENDING: -0.085,
-            CF.MODE_BALANCED: 0.0,
-            CF.MODE_ATTACKING: 0.1
+            CF.Mode.DEFENSIVE: -0.085,
+            CF.Mode.DEFENDING: -0.085,
+            CF.Mode.BALANCED: 0.0,
+            CF.Mode.ATTACKING: 0.1
         }
 
         depth_adjust = mode_shift.get(mode, 0.0)
@@ -123,16 +124,21 @@ class FormationGenerator:
         line_groups = {}
 
         for role in self.role_columns:
+            column_name = role.value
 
-            if role not in formation_row:
-                continue
+            if column_name not in formation_row:
+                raise ValueError(
+                    f"‼️ Role-{column_name} not found in formation row"
+                )
 
-            count = int(formation_row[role])
+            count = int(formation_row[column_name])
             if count <= 0:
                 continue
 
             if role not in self.role_zone_map:
-                continue
+                raise ValueError(
+                    f"‼️ Role-{role} not found in role_zone_map"
+                )
 
             depth_i, _ = self.role_zone_map[role]
 
@@ -188,11 +194,17 @@ class FormationGenerator:
     def generate_template_from_formation(
         self,
         formation_struct,
-        mode = CF.MODE_BALANCED,
-        shape = CF.SHAPE_NA,
+        mode = CF.Mode.BALANCED,
+        shape = CF.Shape.NA,
         team_side="left"
     ):
-        df = self.formation_info_df.copy()
+        form_info_df = self.formation_info_df.copy()
+
+        # If formation string contains shape (e.g. "4-3-3 Diamond")
+        if isinstance(formation_struct, str) and " " in formation_struct:
+            parts = formation_struct.split(" ", 1)  # split only once
+            formation_struct = parts[0]
+            shape = parts[1]
         
         # Normalize strings for safety
         formation_struct = str(formation_struct).strip()
@@ -200,34 +212,50 @@ class FormationGenerator:
         shape = str(shape).strip()
 
         # Try Exact Match
-        matches = df[
-            (df["Structure"] == formation_struct) &
-            (df["Mode"] == mode) &
-            (df["Shape"] == shape)
+        matches = form_info_df[
+            (form_info_df["Structure"] == formation_struct) &
+            (form_info_df["Mode"] == mode) &
+            (form_info_df["Shape"] == shape)
         ]
+
+        # Ignore Mode
+        if len(matches) == 0:
+            matches = form_info_df[
+                (form_info_df["Structure"] == formation_struct) &
+                (form_info_df["Shape"] == shape)
+            ]
 
         # Ignore Shape
         if len(matches) == 0:
-            matches = df[
-                (df["Structure"] == formation_struct) &
-                (df["Mode"] == mode)
+            matches = form_info_df[
+                (form_info_df["Structure"] == formation_struct) &
+                (form_info_df["Mode"] == mode)
             ]
 
-        # Ignore Mode (use basic formation)
+        # Ignore Mode and Shape, use basic structure
         if len(matches) == 0:
-            matches = df[
-                df["Structure"] == formation_struct
+            matches = form_info_df[
+                form_info_df["Structure"] == formation_struct
+            ]
+
+        # If no match found, fallback to Balanced version
+        if len(matches) == 0:
+            print(f"⚠️ Warning: Formation '{formation_struct}' not found in DB. Falling back to 4-4-2 Midfield.")
+            
+            matches = form_info_df[
+                (form_info_df["Structure"] == "4-4-2") &
+                (form_info_df["Mode"] == CF.Mode.MIDFIELD)
             ]
 
         formation_row = matches.iloc[0]
-
-        # print("\n\nFormation = ")
-        # print(formation_row)
 
         template = self.build_template_from_csv_row(
             formation_row,
             mode
         )
+
+        if len(template) == 0:
+            raise ValueError(f"‼️ Template empty!")
 
         # Clip bounds
         template[:,0] = np.clip(template[:,0], 0.05, 0.95)

@@ -3,11 +3,15 @@ import numpy as np
 from ultralytics import YOLO
 from sklearn.cluster import KMeans
 import Configurations as CF
+import pandas as pd
+import os
 
 class TeamClassifier:
     def __init__(self):
         self.kmeans = None
         self.player_id_to_team = {} # Stores {track_id: team_label}
+        self.team_to_jersey_map = {'team_0': {}, 'team_1': {}}
+        self.next_jersey_number = {'team_0': 1, 'team_1': 1}
 
     def get_shirt_crop(self, frame, box):
         """
@@ -71,14 +75,43 @@ class TeamClassifier:
         # 3. Predict
         label = self.kmeans.predict(avg_color)[0]
         team_name = f'team_{label}'
-        
-        # 4. Save result
+
+        # Assign jersey number (1–11 per team)
+        if track_id not in self.team_to_jersey_map[team_name]:
+            jersey = self.next_jersey_number[team_name]
+            if jersey <= 11:
+                self.team_to_jersey_map[team_name][track_id] = jersey
+                self.next_jersey_number[team_name] += 1
+            else:
+                self.team_to_jersey_map[team_name][track_id] = 11
+
         self.player_id_to_team[track_id] = team_name
         return team_name
 
-def ObjectDetection(video_path, output_path):
+def ObjectDetection(video_path=CF.IP_VID_PATH_OBJ_DET, output_path=CF.OP_VID_PATH_OBJ_DET):
+    # ------------------ Check input video path ------------------
+    if not os.path.exists(video_path):
+        raise FileNotFoundError(f"‼️ [ERROR] Video path does not exist: {video_path}")
+
+    if not os.path.isfile(video_path):
+        raise ValueError(f"‼️ [ERROR] Provided path is not a file: {video_path}")
+
+    # ------------------ Check YOLO model path ------------------
+    if not os.path.exists(CF.YOLO_MODEL_PATH):
+        raise FileNotFoundError(
+            f"‼️ [ERROR] YOLO model not found at: {CF.YOLO_MODEL_PATH}"
+        )
     model = YOLO(CF.YOLO_MODEL_PATH)
+
+    # ------------------ Try opening video ------------------
     cap = cv2.VideoCapture(video_path)
+
+    if not cap.isOpened():
+        raise RuntimeError(
+            f"‼️ [ERROR] Failed to open video file: {video_path}"
+        )
+            
+    tracking_data = []
     
     width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -127,20 +160,39 @@ def ObjectDetection(video_path, output_path):
                     if conf > 0.4 and box.id is not None:
                         track_id = int(box.id[0])
                         team = teamClassifier.get_team(frame, box, track_id)
+                        if team is None:
+                            continue
+
+                        jersey_id = teamClassifier.team_to_jersey_map[team][track_id]
                         color = CF.COLORS[team]
-                        
+
                         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-                        # Optional: Draw ID
-                        # cv2.putText(frame, str(track_id), (x1, y1-5), 0, 0.5, color, 2)
+
+                        # Compute center
+                        cx = int((x1 + x2) / 2)
+                        cy = int((y1 + y2) / 2)
+
+                        tracking_data.append([frame_idx, jersey_id, team, cx, cy])
 
                 # --- REF & GK ---
                 elif cls_id == CF.CLASS_MAP['referee'] and conf > 0.4:
                     cv2.rectangle(frame, (x1, y1), (x2, y2), CF.COLORS['referee'], 2)
                     cv2.putText(frame, "Ref", (x1, y1-5), 0, 0.5, CF.COLORS['referee'], 2)
                 
-                elif cls_id == CF.CLASS_MAP['goalkeeper'] and conf > 0.4:
+                elif cls_id == CF.CLASS_MAP['goalkeeper'] and conf > 0.4 and box.id is not None:
+                    track_id = int(box.id[0])
+                    team = teamClassifier.get_team(frame, box, track_id)
+                    if team is None:
+                        continue
+
+                    jersey_id = teamClassifier.team_to_jersey_map[team][track_id]
                     cv2.rectangle(frame, (x1, y1), (x2, y2), CF.COLORS['goalkeeper'], 2)
                     cv2.putText(frame, "GK", (x1, y1-5), 0, 0.5, CF.COLORS['goalkeeper'], 2)
+
+                    cx = int((x1 + x2) / 2)
+                    cy = int((y1 + y2) / 2)
+
+                    tracking_data.append([frame_idx, jersey_id, team, cx, cy])
 
         out.write(frame)
         frame_idx += 1
@@ -148,4 +200,8 @@ def ObjectDetection(video_path, output_path):
 
     cap.release()
     out.release()
-    print("Done!")
+    print("\nObject detection done!\n")
+
+    df = pd.DataFrame(tracking_data, columns=['Frame', 'ID', 'Team', 'X', 'Y'])
+    return df
+
