@@ -1,6 +1,6 @@
 from InteractiveVoronoiPitch import InteractiveVoronoiPitch
 import matplotlib.pyplot as plt
-from FormationDetector import FormationDetector
+from FormationGenerator import FormationGenerator
 
 MY_TEAM_NAME = "A"
 my_formation = "4-3-3"
@@ -10,10 +10,10 @@ OPPONENT_TEAM_NAME = "B"
 opp_formation = "4-4-2"
 opp_mode = "Holding"
 
-formationDetector = FormationDetector()
+formationGenerator = FormationGenerator()
 
-team_A = formationDetector.generate_template_from_formation(my_formation, "left", my_mode)
-team_B = formationDetector.generate_template_from_formation(opp_formation, "right", opp_mode)
+team_A = formationGenerator.generate_template_from_formation(my_formation, "left", my_mode)
+team_B = formationGenerator.generate_template_from_formation(opp_formation, "right", opp_mode)
 
 print(team_A)
 print(team_B)

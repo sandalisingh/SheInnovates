@@ -1,21 +1,13 @@
 import pandas as pd
 from sklearn.cluster import KMeans
-from scipy.optimize import linear_sum_assignment
-from scipy.spatial.distance import cdist
 from sklearn.metrics import silhouette_score
 import numpy as np
-
-FORMATIONS_INFO_DB = pd.read_csv("Data/Formations_info.csv")
-
-PITCH_LENGTH = 105
-PITCH_WIDTH = 68
-PITCH_COLOUR = '#2e8b57'
-
-AREA_CAPTURE_MIN_THRESHOLD = 550 # in m^2
+from FormationGenerator import FormationGenerator
+import Configurations as CF
 
 class FormationDetector:
 
-    def __init__(self, formation_info_df=FORMATIONS_INFO_DB):
+    def __init__(self, formation_info_df=CF.FORMATIONS_INFO_DB):
 
         # If user passed dataframe → use directly
         if isinstance(formation_info_df, pd.DataFrame):
@@ -29,30 +21,6 @@ class FormationDetector:
             raise ValueError(
                 "FormationDetector expects CSV path or pandas DataFrame"
             )
-
-        # role columns used for template matching
-        self.role_columns = [
-            "LCB", # Left Center Back
-            "CB", # Center Back
-            "RCB", # Right Center Back
-            "LB", # Left Back
-            "RB", # Right Back
-            "CDM", # Defensive Midfielder
-            "CM", # Central Midfielder
-            "CAM", # Central Attacking Midfielder
-            "LM", # Left Midfielder
-            "RM", # Right Midfielder
-            "LW", # Left Winger
-            "RW", # Right Winger
-            "ST", # Striker
-            "CF", # Center Forward
-            "LS", # Left Striker
-            "RS"  # Right Striker
-        ]
-
-        self.role_columns = [
-            c for c in self.role_columns if c in self.formation_info_df.columns
-        ]
 
     def scale_data_to_pitch(self, df):
         """
@@ -150,95 +118,58 @@ class FormationDetector:
 
         counts = list(counts_dict.values())
 
-        # counts.sort(reverse=True)
         print(f"DEBUG: Line Counts: {counts}")
 
         return "-".join(map(str, counts))
 
-    # Create template positions from CSV row
-    def build_template_for_formation_info(self, formation_row):
-        formation_row = formation_row.copy() 
-        # print(f"DEBUG: Building template for formation row:\n{formation_row}\n")
-
-        template = []
-
-        # depth levels (def → attack)
-        depth_map = {
-            "B": 0.2,   # Backline
-            "D": 0.35,  # Defensive Midfield
-            "M": 0.55,  # Midfield
-            "A": 0.75,  # Attacking Midfield
-            "F": 0.85   # Forwards
-        }
-
-        x_coords = []
-
-        for role in self.role_columns:
-
-            if role not in formation_row:
-                continue
-
-            count = int(formation_row[role])
-            if count == 0:
-                continue
-
-            for i in range(count):
-
-                if "CB" in role or "LB" in role or "RB" in role:
-                    x = depth_map["D"]
-                elif "CDM" in role:
-                    x = depth_map["M"] - 0.1
-                elif "CM" in role or "LM" in role or "RM" in role:
-                    x = depth_map["M"]
-                elif "CAM" in role:
-                    x = depth_map["A"]
-                else:
-                    x = depth_map["F"]
-
-                x_coords.append(x)
-
-        x_count = pd.Series(x_coords).value_counts().to_dict()
-        
-        # assign y based on same x
-        for x, count in x_count.items():
-            y_positions = np.linspace(0.0, 1.0, count + 2)[1:-1] # avoid edges
-            for y in y_positions:
-                template.append([x, y])
-
-        # print(f"DEBUG: Built template with {player_count} outfield players:\n{np.array(template)}\n")
-
-        return np.array(template)
-
-    # Compare real players to formation template
-    def compare_to_template(self, players, formation_row):
-
-        template = self.build_template_for_formation_info(formation_row)
-
-        if len(template) == 0:
-            return 1e9
-
-        # match sizes
-        n = min(len(players), len(template))
-        players = players[:n]
-        template = template[:n]
-
-        cost = cdist(players, template)
-
-        row_ind, col_ind = linear_sum_assignment(cost)
-
-        return cost[row_ind, col_ind].mean()
-
     # Detect attacking / defensive / balanced phase
-    def detect_mode(self, players):
+    def detect_mode(self, players, line_labels=None):
+        """
+        Uses depth, compactness and line structure.
+        """
 
-        depth = np.mean(players[:,0])
+        # Overall team depth
+        mean_depth = np.mean(players[:, 0])
 
-        if depth < 0.4:
-            return "Defensive"
-        elif depth > 0.6:
-            return "Attacking"
+        # Defensive line depth (deepest 3 players)
+        sorted_x = np.sort(players[:, 0])
+        defensive_line_depth = np.mean(sorted_x[:3])
+
+        # Forward line depth (highest 3 players)
+        attacking_line_depth = np.mean(sorted_x[-3:])
+
+        # Team vertical stretch
+        stretch = np.max(players[:, 0]) - np.min(players[:, 0])
+
+        print(f"DEBUG MODE:")
+        print(f"Mean Depth: {mean_depth:.3f}")
+        print(f"Defensive Line: {defensive_line_depth:.3f}")
+        print(f"Attacking Line: {attacking_line_depth:.3f}")
+        print(f"Stretch: {stretch:.3f}")
+
+        # -------------------------
+        # DECISION LOGIC
+        # -------------------------
+
+        # Very high line + stretched
+        if mean_depth > 0.6 and attacking_line_depth > 0.75:
+            return CF.MODE_ATTACKING
+
+        # Very deep block
+        if mean_depth < 0.4 and defensive_line_depth < 0.25:
+            return CF.MODE_DEFENSIVE
+
+        # Compact mid-block
+        if 0.4 <= mean_depth <= 0.6 and stretch < 0.55:
+            return CF.MODE_BALANCED
+
+        # Fallback
+        if mean_depth > 0.55:
+            return CF.MODE_ATTACKING
+        elif mean_depth < 0.45:
+            return CF.MODE_DEFENSIVE
         else:
-            return "Balanced"
+            return CF.MODE_BALANCED
 
     # MAIN DETECTION FUNCTION
     def detect_formation_from_player_positions(self, team_coords, team_side="left"):
@@ -280,63 +211,16 @@ class FormationDetector:
         best_matching_formation = None
         best_score = 1e9    
 
+        formationGenerator = FormationGenerator()
+
         for _, row in matches.iterrows():
-            diff_score_from_template = self.compare_to_template(coords, row)
+            diff_score_from_template = formationGenerator.compare_to_template(coords, row)
 
             if diff_score_from_template < best_score:
                 best_score = diff_score_from_template
                 best_matching_formation = row
 
-        mode = self.detect_mode(coords)
+        mode = self.detect_mode(coords, labels)
 
         return pattern, mode, best_matching_formation
    
-    def generate_template_from_formation(self, formation, team_side="left", mode="balanced"):
-        """
-        Creates positions INCLUDING goalkeeper.
-        Formation string only represents outfield players.
-        Example: 4-3-3 → 10 outfield + 1 GK
-        """
-
-        # candidate formations from csv
-        matches = self.formation_info_df[
-            (self.formation_info_df["Formation"].str.contains(formation, na=False)) &
-            (self.formation_info_df["Mode"].str.contains(mode, na=False))
-        ]
-
-        if len(matches) == 0:
-            return None
-
-        positions = []
-
-        # 1. ADD GOALKEEPER FIRST
-        if team_side == "left":
-            gk_x = 3.5                     # inside 6-yard area
-        else:
-            gk_x = PITCH_LENGTH - 3.5
-
-        gk_y = PITCH_WIDTH / 2
-        positions.append([gk_x, gk_y])
-
-        print(f"DEBUG: Added Goalkeeper at position:\n{np.array(positions)}\n")
-
-        template = self.build_template_for_formation_info(matches.iloc[0])
-
-        # 2. OUTFIELD PLAYERS
-        if team_side == "left":
-            # scale to pitch dimensions
-            template[:,0] = template[:,0] * PITCH_LENGTH
-            template[:,1] = template[:,1] * PITCH_WIDTH
-
-            positions += template.tolist()
-        else:
-            # flip horizontally for right side
-            flipped_template = template.copy()
-            flipped_template[:,0] = 1 - flipped_template[:,0]
-
-            # scale to pitch dimensions
-            flipped_template[:,0] = flipped_template[:,0] * PITCH_LENGTH
-            flipped_template[:,1] = flipped_template[:,1] * PITCH_WIDTH
-            positions += flipped_template.tolist()
-
-        return np.array(positions)

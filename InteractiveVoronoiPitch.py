@@ -7,22 +7,7 @@ from shapely.geometry import box
 import pandas as pd
 from FormationDetector import FormationDetector
 from TacticalAnalyzer import TacticalAnalyzer
-import textwrap
-
-# ----------------------------- CONFIGURATION -----------------------------
-
-FORMATIONS_INFO_DB = pd.read_csv("Data/Formations_info.csv")
-
-PITCH_LENGTH = 105
-PITCH_WIDTH = 68
-MY_TEAM_NAME = "Home"
-OPPONENT_TEAM_NAME = "Away"
-
-HOME_PLAYER_COLOUR = '#3498db'
-HOME_GK_COLOUR = "#0ff1b5"
-
-AWAY_PLAYER_COLOUR = '#e74c3c'
-AWAY_GK_COLOUR = '#e67e22'
+import Configurations as CF
 
 # ------------------------- VORONOI GENERATION -------------------------
 def voronoi_finite_polygons_2d(vor, radius=1000):
@@ -79,11 +64,11 @@ def voronoi_finite_polygons_2d(vor, radius=1000):
 
 class InteractiveVoronoiPitch:
     def __init__(self, home_formation, away_formation):
-        self.formation_detector = FormationDetector(FORMATIONS_INFO_DB)
+        self.formation_detector = FormationDetector(CF.FORMATIONS_INFO_DB)
 
         # 1. Setup the Figure
         self.fig, self.ax = plt.subplots(figsize=(12, 8))
-        self.fig.canvas.manager.set_window_title(f"Tactical Board - {MY_TEAM_NAME} vs {OPPONENT_TEAM_NAME}")
+        self.fig.canvas.manager.set_window_title(f"Tactical Board - {CF.MY_TEAM_NAME} vs {CF.OPPONENT_TEAM_NAME}")
         
         # Dimensions
         self.width = 105
@@ -223,7 +208,7 @@ class InteractiveVoronoiPitch:
 
         # DRAW VORONOI REGIONS
         for poly, is_home in regions:
-            color = HOME_PLAYER_COLOUR if is_home else AWAY_PLAYER_COLOUR
+            color = CF.HOME_PLAYER_COLOUR if is_home else CF.AWAY_PLAYER_COLOUR
             x, y = poly.exterior.xy
 
             mpl_poly = Polygon(
@@ -240,15 +225,15 @@ class InteractiveVoronoiPitch:
         # PLAYER COLORS (GK highlighted)
         home_gk, away_gk = self.get_goalkeepers()
 
-        home_colors = [HOME_PLAYER_COLOUR] * len(self.home_coords)
-        away_colors = [AWAY_PLAYER_COLOUR] * len(self.away_coords)
+        home_colors = [CF.HOME_PLAYER_COLOUR] * len(self.home_coords)
+        away_colors = [CF.AWAY_PLAYER_COLOUR] * len(self.away_coords)
 
         home_sizes = [250] * len(self.home_coords)
         away_sizes = [250] * len(self.away_coords)
 
         # Highlight goalkeepers
-        home_colors[home_gk] = HOME_GK_COLOUR
-        away_colors[away_gk] = AWAY_GK_COLOUR
+        home_colors[home_gk] = CF.HOME_GK_COLOUR
+        away_colors[away_gk] = CF.AWAY_GK_COLOUR
 
         home_sizes[home_gk] = 380
         away_sizes[away_gk] = 380
@@ -329,18 +314,15 @@ class InteractiveVoronoiPitch:
             self.home_coords, self.away_coords
         )
 
-        compactness = "Home tighter block" if home_compact < away_compact else "Away tighter block"
-        width_analysis = "Home stretching pitch" if home_width > away_width else "Away stretching pitch"
-        central_control = "Home dominance" if center_h > center_a else "Away dominance"
-        overloads = "Home creating overloads" if over_h > over_a else "Away creating overloads"
+        compactness = f"{CF.MY_TEAM_NAME} tighter block" if home_compact < away_compact else f"{CF.OPPONENT_TEAM_NAME} tighter block"
+        width_analysis = f"{CF.MY_TEAM_NAME} stretching pitch" if home_width > away_width else f"{CF.OPPONENT_TEAM_NAME} stretching pitch"
+        central_control = f"{CF.MY_TEAM_NAME} dominance" if center_h > center_a else f"{CF.OPPONENT_TEAM_NAME} dominance"
+        overloads = f"{CF.MY_TEAM_NAME} creating overloads" if over_h > over_a else f"{CF.OPPONENT_TEAM_NAME} creating overloads"
 
-        home_form, _, home_row = self.formation_detector.detect_formation_from_player_positions(self.home_coords, team_side="left")
-        away_form, _, away_row = self.formation_detector.detect_formation_from_player_positions(self.away_coords, team_side="right")
+        home_form_pattern, home_mode, home_row = self.formation_detector.detect_formation_from_player_positions(self.home_coords, team_side="left")
+        away_form_pattern, away_mode, away_row = self.formation_detector.detect_formation_from_player_positions(self.away_coords, team_side="right")
 
-        home_advice = self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row)
-
-        home_mode = home_row['Mode'] if isinstance(home_row, pd.Series) else "Unknown"
-        away_mode = away_row['Mode'] if isinstance(away_row, pd.Series) else "Unknown"
+        # home_advice = self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row)
 
         # ---- FORMATIONS ----
         pad_x = 2
@@ -348,11 +330,11 @@ class InteractiveVoronoiPitch:
         top_y = -pad_y
 
         home_text = (
-            "HOME" +
-            f"\nFormation : {home_form}" + 
+            f"{CF.MY_TEAM_NAME}"  +
+            f"\nFormation : {home_form_pattern}" + 
             (f"\nMode : {home_mode}" if home_mode!="Unknown" else "") +
-            "\n\nAWAY" +
-            f"\nFormation : {away_form}" +
+            f"\n\n{CF.OPPONENT_TEAM_NAME}" +
+            f"\nFormation : {away_form_pattern}" +
             (f"\nMode : {away_mode}" if away_mode!="Unknown" else "")
         )
 
@@ -371,8 +353,8 @@ class InteractiveVoronoiPitch:
         # ---- METRICS ----
         control_text = (
             "CONTROL\n"
-            f"Home  : {home_control:.1f}%\n"
-            f"Away  : {away_control:.1f}%"
+            f"{CF.MY_TEAM_NAME}  : {home_control:.1f}%\n"
+            f"{CF.OPPONENT_TEAM_NAME}  : {away_control:.1f}%"
         )
 
         self.bottom_texts.append(
@@ -400,21 +382,6 @@ class InteractiveVoronoiPitch:
                 self.left_w + self.mid_w + pad_x,
                 top_y,
                 structure_text,
-                ha="left",
-                va="top",
-                fontsize=11,
-                linespacing=1.6,
-                wrap=True
-            )
-        )
-
-        info_text = "\n".join(self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row))
-
-        self.bottom_texts.append(
-            self.ax.text(
-                self.left_w +pad_x,
-                top_y + 60,
-                info_text,
                 ha="left",
                 va="top",
                 fontsize=11,
