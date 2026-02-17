@@ -1,4 +1,30 @@
+# -------------------------- PATHS --------------------------
+YOLO_MODEL_PATH = "Models/best_object_detection_model.pt"
 FORMATIONS_INFO_DB = "Data/Formations_info_transformed.csv"
+
+# -------------------------- OBJECT DETECTION --------------------------
+
+IP_VID_PATH_OBJ_DET = "Data/Raw/input_video_obj_det.mp4"
+OP_VID_PATH_OBJ_DET = "Data/Raw/output_video_obj_det.mp4"
+
+# Class Mapping (Verify with your model.names)
+CLASS_MAP = {
+    'ball': 0,
+    'player': 1,
+    'referee': 2,
+    'goalkeeper': 3 # If your model detects GK separately
+}
+
+# Colors (BGR)
+COLORS = {
+    'ball': (0, 255, 255),       # Yellow
+    'referee': (0, 0, 0),        # Black
+    'goalkeeper': (255, 0, 255), # Magenta
+    'team_0': (255, 0, 0),       # Blue
+    'team_1': (0, 0, 255)        # Red
+}
+
+# -------------------------- DRAWING PITCH --------------------------
 
 PITCH_LENGTH = 105
 PITCH_WIDTH = 68
