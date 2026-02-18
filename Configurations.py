@@ -2,6 +2,7 @@ from enum import Enum
 
 # -------------------------- PATHS --------------------------
 YOLO_MODEL_PATH = "Models/best_object_detection_model.pt"
+FORMATION_CLASSIFIER_PATH = "Models/knn_formation_model.pkl"
 FORMATIONS_INFO_DB = "Data/Formations_info_transformed.csv"
 
 # -------------------------- OBJECT DETECTION --------------------------
@@ -106,8 +107,8 @@ class Shape(Enum):
 
 # -------------------------- PLAYER ROLES --------------------------
 
-
 class Role(Enum):
+    
     # Goalkeeper
     Goalkeeper = "GK"
 
@@ -152,3 +153,4 @@ class Role(Enum):
     Right_Striker = "RS"
 
 ROLE_LIST = list(Role)
+ROLE_VALUE_LIST = list(r.value for r in Role)
