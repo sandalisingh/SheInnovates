@@ -183,15 +183,29 @@ class InteractiveVoronoiPitch:
             p.remove()
         self.voronoi_patches = []
 
-        regions, space_data, h_area, a_area = self.compute_voronoi()
-        vulnerabilities = self.tactical_anaylzer.identify_vulnerabilities(space_data)
+        # 1. COMPUTE 22-MAN VORONOI (Used for visual rendering & possession control)
+        regions, space_data_22, h_area, a_area = self.compute_voronoi()
 
+        # 2. COMPUTE 11-MAN VORONOI (Used exclusively for structural vulnerabilities)
+        home_11_space = self.tactical_anaylzer.analyze_space_control(self.home_coords)
+        away_11_space = self.tactical_anaylzer.analyze_space_control(self.away_coords)
+
+        # Identify vulnerabilities based purely on isolated team shape
+        home_vuln = self.tactical_anaylzer.identify_team_vulnerabilities(home_11_space, 'home', CF.MY_TEAM_NAME)
+        away_vuln = self.tactical_anaylzer.identify_team_vulnerabilities(away_11_space, 'away', CF.OPPONENT_TEAM_NAME)
+        
+        # Combine and sort so biggest gaps appear first
+        vulnerabilities = home_vuln + away_vuln
+        vulnerabilities.sort(key=lambda v: v['area'], reverse=True)
+
+        # 3. DRAW THE 22-MAN REGIONS WITH DARKER SHADES FOR VULNERABLE PLAYERS
         for poly, is_home, player_idx in regions:
             team_str = 'home' if is_home else 'away'
             color = CF.HOME_PLAYER_COLOUR if is_home else CF.AWAY_PLAYER_COLOUR
             
+            # Check if this player was flagged in the 11-man structural calculation
             is_vulnerable = any(
-                v['player_data']['id'] == player_idx and v['player_data']['team'] == team_str 
+                v['player_id'] == player_idx and v['team_tag'] == team_str 
                 for v in vulnerabilities
             )
             
@@ -229,6 +243,7 @@ class InteractiveVoronoiPitch:
             self.away_texts.append(self.ax.text(x,y,str(i+1), color='white',ha='center',va='center', fontweight='bold',zorder=11))
 
         if vulnerabilities:
+            # Show up to 4 biggest weaknesses
             text_str = "WEAKNESSES:\n" + "\n".join([v['detail'] for v in vulnerabilities[:4]])
             props = dict(boxstyle='round', facecolor='black', alpha=0.8)
             self.ax.text(0.02, 0.98, text_str, transform=self.ax.transAxes, fontsize=9, verticalalignment='top', color='red', bbox=props, zorder=15)
@@ -257,13 +272,15 @@ class InteractiveVoronoiPitch:
         pad_y = 2
         top_y = -pad_y
 
-        # FIXED: Use the cleaned base formation strings here
+        home_display = "Unclear (Low Confidence)" if "Unclear" in self.home_form_base else self.home_form_base
+        away_display = "Unclear (Low Confidence)" if "Unclear" in self.away_form_base else self.away_form_base
+
         home_text = (
             f"[{CF.MY_TEAM_NAME}]\n"  +
-            f"Form: {self.home_form_base}\n" + 
+            f"Form: {home_display}\n" + 
             f"Mode: {self.home_mode}\n\n" +
             f"[{CF.OPPONENT_TEAM_NAME}]\n" +
-            f"Form: {self.away_form_base}\n" +
+            f"Form: {away_display}\n" +
             f"Mode: {self.away_mode}"
         )
         self.bottom_texts.append(self.ax.text(pad_x, top_y, home_text, ha="left", va="top", fontsize=10, linespacing=1.5))
@@ -276,6 +293,8 @@ class InteractiveVoronoiPitch:
         )
         if counter_formations:
             control_text += f"Counters:\n{counter_formations}"
+        else:
+            control_text += "Counters:\nN/A"
 
         self.bottom_texts.append(self.ax.text(self.left_w + pad_x, top_y, control_text, ha="left", va="top", fontsize=10, linespacing=1.5))
 

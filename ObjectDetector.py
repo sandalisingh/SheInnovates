@@ -111,7 +111,7 @@ class ObjectDetector:
 
         return pd.DataFrame(tracking_data, columns=['Frame', 'ID', 'Team', 'X', 'Y'])
 
-    def process_image(self, image_path, output_path=None):
+    def process_image(self, image_path, output_path=CF.OP_IMG_PATH_OBJ_DET):
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"‼️ [ERROR] Image path does not exist: {image_path}")
 

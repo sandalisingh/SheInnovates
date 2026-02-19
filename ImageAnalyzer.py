@@ -44,17 +44,18 @@ class ImageAnalyzer:
     def process_image(self):
         print("\n--- STEP 1: Running Object Detector ---")
 
-        # FIXED: Pass output_path to save the annotated image
-        output_image_path = "annotated_detected_players.jpg"
-
-        object_detector = ObjectDetector()
-        self.tracking_df, self.annotated_image = object_detector.process_image(self.image_path, output_path=output_image_path)
+        detector = ObjectDetector()
+        
+        self.tracking_df, self.annotated_image = detector.process_image(
+            self.image_path, 
+            output_path=CF.OP_IMG_PATH_OBJ_DET 
+        )
 
         if self.tracking_df is None or len(self.tracking_df) == 0:
             raise ValueError("‼️ Detection dataframe is empty. No players found.")
 
         print("Total players detected:", len(self.tracking_df))
-        print(f"✅ Annotated image saved locally as: {output_image_path}")
+        print(f"✅ Annotated image saved locally as: {CF.OP_IMG_PATH_OBJ_DET}")
 
         self.show_detected_image()
 
@@ -140,36 +141,43 @@ class ImageAnalyzer:
     def analyze_and_print_tactics(self, team_A_template, team_B_template):
         print("\n--- STEP 5: Tactical Analysis (Space Control & Vulnerabilities) ---")
         
-        # Use the perfectly scaled templates rather than raw pixel coordinates!
+        # --- 1. Calculate 22-man space for possession control ---
         all_coords = np.vstack((team_A_template, team_B_template))
         epsilon = 1e-6
         all_coords = all_coords + np.random.uniform(-epsilon, epsilon, all_coords.shape)
         
-        space_data = self.tactical_analyzer.analyze_space_control(all_coords)
+        space_data_22 = self.tactical_analyzer.analyze_space_control(all_coords)
         
         h_area = 0
         a_area = 0
         
-        for i, p in enumerate(space_data):
+        for i, p in enumerate(space_data_22):
             is_home = i < len(team_A_template)
-            p['team'] = 'home' if is_home else 'away'
-            p['id'] = (i + 1) if is_home else (i - len(team_A_template) + 1)
-            
             if is_home: h_area += p['area']
             else: a_area += p['area']
                 
-        vulnerabilities = self.tactical_analyzer.identify_vulnerabilities(space_data)
+        # --- 2. Calculate 11-man space for structural vulnerabilities (FIXED) ---
+        home_11_space = self.tactical_analyzer.analyze_space_control(team_A_template)
+        away_11_space = self.tactical_analyzer.analyze_space_control(team_B_template)
+
+        home_vuln = self.tactical_analyzer.identify_team_vulnerabilities(home_11_space, 'home', CF.MY_TEAM_NAME)
+        away_vuln = self.tactical_analyzer.identify_team_vulnerabilities(away_11_space, 'away', CF.OPPONENT_TEAM_NAME)
+
+        vulnerabilities = home_vuln + away_vuln
+        vulnerabilities.sort(key=lambda v: v['area'], reverse=True)
         
+        # Print Control Percentages
         total_pitch_area = CF.PITCH_LENGTH * CF.PITCH_WIDTH
         print(f"\n>> SPACE CONTROL:")
         print(f"   {CF.MY_TEAM_NAME}: {(h_area / total_pitch_area) * 100:.1f}%")
         print(f"   {CF.OPPONENT_TEAM_NAME}: {(a_area / total_pitch_area) * 100:.1f}%")
 
+        # Print Vulnerabilities
         print(f"\n>> STRUCTURAL VULNERABILITIES:")
         if not vulnerabilities:
             print("   ✅ No major spatial gaps detected in the central zones.")
         else:
-            for v in vulnerabilities:
+            for v in vulnerabilities[:4]: # Print top 4 gaps
                 print(f"   🚨 {v['detail']}")
 
     # FULL PIPELINE
@@ -178,13 +186,11 @@ class ImageAnalyzer:
         self.extract_team_coords()
         self.detect_formations()
         
-        # Reordered: Generate templates FIRST, then analyze them!
         team_A_template, team_B_template = self.generate_formations()
         self.analyze_and_print_tactics(team_A_template, team_B_template)
 
         print("\n--- STEP 6: Launching Interactive Tactical Board ---")
         
-        # Pass the string formations directly so the GUI doesn't have to guess them again
         InteractiveVoronoiPitch(
             team_A_template, team_B_template, 
             self.team_A_formation, self.team_B_formation,

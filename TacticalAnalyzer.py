@@ -5,24 +5,17 @@ from shapely.geometry import Polygon, box
 import Configurations as CF
 from FormationDetector import get_row_from_string
 
-FORMATIONS_INFO_DB = pd.read_csv("Data/Formations_info.csv")
-PITCH_LENGTH = 105
-PITCH_WIDTH = 68
-PITCH_COLOUR = '#2e8b57'
-AREA_CAPTURE_MIN_THRESHOLD = 550 # in m^2
-
 class TacticalAnalyzer:
     def __init__(self):
-        self.pitch_box = box(0, 0, PITCH_LENGTH, PITCH_WIDTH)
+        self.pitch_box = box(0, 0, CF.PITCH_LENGTH, CF.PITCH_WIDTH)
 
-    # --- For Voronoi area calculation ---
     def analyze_space_control(self, centroids):
         # Voronoi with Boundary Points to prevent infinite regions
         boundary_points = [
             [-20, -20], 
-            [PITCH_LENGTH + 20, -20], 
-            [PITCH_LENGTH + 20, PITCH_WIDTH + 20], 
-            [-20, PITCH_WIDTH + 20]
+            [CF.PITCH_LENGTH + 20, -20], 
+            [CF.PITCH_LENGTH + 20, CF.PITCH_WIDTH + 20], 
+            [-20, CF.PITCH_WIDTH + 20]
         ]
         points = np.vstack([centroids, boundary_points])
         
@@ -41,7 +34,6 @@ class TacticalAnalyzer:
                 continue
                 
             poly = Polygon(voronoi.vertices[region_verts])
-            # Clip to Pitch Box
             intersection = poly.intersection(self.pitch_box)
             
             analysis_results.append({
@@ -52,29 +44,27 @@ class TacticalAnalyzer:
             })
             
         return analysis_results
-    # ---------------------------------------------------
 
-    def identify_vulnerabilities(self, space_data):
+    # FIXED: Re-written to analyze an isolated 11-man team shape
+    def identify_team_vulnerabilities(self, team_space_data, team_tag, display_name):
         vulnerabilities = []
         
-        for p in space_data:
+        for i, p in enumerate(team_space_data):
             x, y = p['centroid']
             area = p['area']
+            player_id = i + 1 # 1-indexed to match UI
             
             # Check central band (30m - 75m length)
             if 30 < x < 75: 
-                if area > AREA_CAPTURE_MIN_THRESHOLD:
-                    # Determine team name based on the tag we injected in ImageAnalyzer/VideoAnalyzer
-                    team_prefix = CF.MY_TEAM_NAME if p.get('team') == 'home' else CF.OPPONENT_TEAM_NAME
-                    
+                if area > CF.AREA_CAPTURE_MIN_THRESHOLD:
                     vulnerabilities.append({
                         'type': 'Sparse Coverage',
-                        'detail': f"{team_prefix} Player {p['id']} gap: {int(area)}m²",
-                        'player_data': p
+                        'detail': f"[{display_name}] ID {player_id} gap: {int(area)}m²",
+                        'player_id': player_id,
+                        'team_tag': team_tag,
+                        'area': area
                     })
                     
-        # Sort so the largest, most dangerous areas appear at the top of the list
-        vulnerabilities.sort(key=lambda v: v['player_data']['area'], reverse=True)
         return vulnerabilities
 
     def compactness(self, team):
@@ -97,8 +87,8 @@ class TacticalAnalyzer:
 
     def central_control(self, home, away):
         center_box = np.array([
-            [PITCH_WIDTH*0.35, PITCH_LENGTH*0.25],
-            [PITCH_WIDTH*0.65, PITCH_LENGTH*0.75]
+            [CF.PITCH_WIDTH*0.35, CF.PITCH_LENGTH*0.25],
+            [CF.PITCH_WIDTH*0.65, CF.PITCH_LENGTH*0.75]
         ])
 
         def inside(team):
@@ -135,7 +125,6 @@ class TacticalAnalyzer:
     def tactical_advice_from_Information_Base(self, my_team_row, opponent_row):
         advice = []
         counter_formations = []
-        global FORMATIONS_INFO_DB
         
         my_team_full_row = get_row_from_string(my_team_row)
         opponent_full_row = get_row_from_string(opponent_row)

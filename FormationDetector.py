@@ -42,7 +42,7 @@ def get_row_from_string(prediction_string):
     return None
 
 class FormationDetector:
-    def __init__(self, knn_model_path=CF.FORMATION_CLASSIFIER_PATH"):
+    def __init__(self, knn_model_path=CF.FORMATION_CLASSIFIER_PATH):
         self.knn_model = joblib.load(knn_model_path)
         self.role_cols = CF.ROLE_VALUE_LIST
         
