@@ -1,19 +1,16 @@
-import cv2
-import numpy as np
 import torch
 import matplotlib.pyplot as plt
-import pandas as pd
 
 from FormationDetector import FormationDetector
 from FormationGenerator import FormationGenerator
 from InteractiveVoronoiPitch import InteractiveVoronoiPitch
-from ObjectDetector import ObjectDetection
+from ObjectDetector import ObjectDetector
 import Configurations as CF
 
 
 class VideoAnalyzer:
 
-    def __init__(self, video_path):
+    def __init__(self, video_path=CF.IP_VID_PATH_OBJ_DET):
         self.video_path = video_path
 
         self.device = self._get_device()
@@ -47,7 +44,8 @@ class VideoAnalyzer:
     def process_video(self):
         print("\nRunning Object Detector and Tracking...")
 
-        self.tracking_df = ObjectDetection(self.video_path)
+        detector = ObjectDetector()
+        self.tracking_df = detector.process_video(self.video_path) # Or detector.process_image() for the ImageAnalyzer
 
         if self.tracking_df is None or len(self.tracking_df) == 0:
             raise ValueError("‼️ Tracking dataframe is empty.")
@@ -106,20 +104,22 @@ class VideoAnalyzer:
         Automatically:
         - Removes GK (deepest player)
         - Detects tactical lines
-        - Matches against formation DB
+        - Maps to ML Roles (Hungarian Alg)
+        - Predicts Base Structure using KNN
         """
 
         print("\nDetecting formations...")
 
         # Team A assumed left side
-        pattern_A, mode_A, matched_A = \
+        # Unpacks the predicted string directly from the ML model
+        pattern_A, mode_A, predicted_formation_A = \
             self.formation_detector.detect_formation_from_player_positions(
                 self.team_A_coords,
                 team_side="left"
             )
 
         # Team B assumed right side
-        pattern_B, mode_B, matched_B = \
+        pattern_B, mode_B, predicted_formation_B = \
             self.formation_detector.detect_formation_from_player_positions(
                 self.team_B_coords,
                 team_side="right"
@@ -128,13 +128,9 @@ class VideoAnalyzer:
         self.team_A_mode = mode_A
         self.team_B_mode = mode_B
 
-        self.team_A_formation = (
-            matched_A["Formation"] if matched_A is not None else pattern_A
-        )
-
-        self.team_B_formation = (
-            matched_B["Formation"] if matched_B is not None else pattern_B
-        )
+        # Fallback to pattern string if ML somehow fails
+        self.team_A_formation = predicted_formation_A if predicted_formation_A else pattern_A
+        self.team_B_formation = predicted_formation_B if predicted_formation_B else pattern_B
 
         print("\nTEAM A FORMATION:", self.team_A_formation)
         print("TEAM A MODE:", self.team_A_mode)
@@ -152,18 +148,18 @@ class VideoAnalyzer:
 
         print("\nGenerating tactical templates...")
 
+        # Pass the full ML predicted string. 
+        # The updated FormationGenerator will intelligently parse out Structure, Mode, and Shape.
         team_A_template = self.formation_generator.generate_template_from_formation(
-            formation_struct=self.team_A_formation,
-            team_side="left",
+            formation_name=self.team_A_formation,
             mode=self.team_A_mode,
-            shape=""
+            team_side="left"
         )
 
         team_B_template = self.formation_generator.generate_template_from_formation(
-            formation_struct=self.team_B_formation,
-            team_side="right",
+            formation_name=self.team_B_formation,
             mode=self.team_B_mode,
-            shape=""
+            team_side="right"
         )
 
         return team_A_template, team_B_template
@@ -187,5 +183,9 @@ class VideoAnalyzer:
 
         team_A_template, team_B_template = self.generate_formations()
 
-        InteractiveVoronoiPitch(team_A_template, team_B_template)
+        InteractiveVoronoiPitch(
+            team_A_template, team_B_template,
+            self.team_A_formation, self.team_B_formation,
+            self.team_A_mode, self.team_B_mode
+        )
         plt.show()

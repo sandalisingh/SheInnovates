@@ -5,203 +5,155 @@ from sklearn.cluster import KMeans
 import Configurations as CF
 import pandas as pd
 import os
+from TeamClassifier import TeamClassifier
 
-class TeamClassifier:
-    def __init__(self):
-        self.kmeans = None
-        self.player_id_to_team = {} # Stores {track_id: team_label}
-        self.team_to_jersey_map = {'team_0': {}, 'team_1': {}}
-        self.next_jersey_number = {'team_0': 1, 'team_1': 1}
+class ObjectDetector:
+    def __init__(self, model_path=CF.YOLO_MODEL_PATH):
+        """Initializes the Object Detector and loads the YOLO model ONCE into memory."""
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"‼️ [ERROR] YOLO model not found at: {model_path}")
+        
+        print("Loading YOLO Model...")
+        self.model = YOLO(model_path)
 
-    def get_shirt_crop(self, frame, box):
+    def _annotate_and_log(self, frame, box, cls_id, conf, track_id, team_classifier, tracking_data, frame_idx):
         """
-        Extracts only the 'shirt' area (top center) to avoid
-        background grass and shorts mixing into the color.
+        Shared helper method to draw bounding boxes, text, and log coordinates.
+        Used by both Image and Video processing to prevent code duplication.
         """
         x1, y1, x2, y2 = map(int, box.xyxy[0])
-        h = y2 - y1
-        w = x2 - x1
-        
-        # KEY FIX: Crop stricter. 
-        # Top 15% to 50% (The chest area)
-        # Central 40% width (Avoid grass on sides)
-        y_start = y1 + int(h * 0.15)
-        y_end   = y1 + int(h * 0.50)
-        x_start = x1 + int(w * 0.30)
-        x_end   = x2 - int(w * 0.30)
-        
-        # Safety check to keep within frame
-        h_img, w_img, _ = frame.shape
-        y_start, y_end = max(0, y_start), min(h_img, y_end)
-        x_start, x_end = max(0, x_start), min(w_img, x_end)
-        
-        return frame[y_start:y_end, x_start:x_end]
+        cx, cy = int((x1 + x2) / 2), int((y1 + y2) / 2)
 
-    def train(self, frames_buffer, model):
-        """
-        Learns the two dominant team colors from the first 60 frames.
-        """
-        print("Training Team Classifier (Sampling shirt colors)...")
-        player_colors = []
+        # --- BALL ---
+        if cls_id == CF.CLASS_MAP['ball']:
+            cv2.rectangle(frame, (x1, y1), (x2, y2), CF.COLORS.get('ball', (0, 255, 255)), 2)
+
+        # --- PLAYERS ---
+        elif cls_id == CF.CLASS_MAP['player'] and conf > 0.4:
+            team = team_classifier.get_team(frame, box, track_id)
+            if team is not None:
+                jersey_id = team_classifier.team_to_jersey_map[team][track_id]
+                color = CF.COLORS.get(team, (255, 255, 255))
+
+                cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                cv2.putText(frame, f"ID: {jersey_id}", (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                tracking_data.append([frame_idx, jersey_id, team, cx, cy])
+
+        # --- REFEREE ---
+        elif cls_id == CF.CLASS_MAP['referee'] and conf > 0.4:
+            cv2.rectangle(frame, (x1, y1), (x2, y2), CF.COLORS.get('referee', (0, 0, 0)), 2)
+            cv2.putText(frame, "Ref", (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, CF.COLORS.get('referee', (0,0,0)), 2)
+
+        # --- GOALKEEPER ---
+        elif cls_id == CF.CLASS_MAP['goalkeeper'] and conf > 0.4:
+            team = team_classifier.get_team(frame, box, track_id)
+            if team is not None:
+                jersey_id = team_classifier.team_to_jersey_map[team][track_id]
+                color = CF.COLORS.get('goalkeeper', (255, 0, 255))
+                
+                cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                cv2.putText(frame, "GK", (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                tracking_data.append([frame_idx, jersey_id, team, cx, cy])
+
+    def process_video(self, video_path=CF.IP_VID_PATH_OBJ_DET, output_path=CF.OP_VID_PATH_OBJ_DET):
+        if not os.path.exists(video_path):
+            raise FileNotFoundError(f"‼️ [ERROR] Video path does not exist: {video_path}")
+
+        cap = cv2.VideoCapture(video_path)
+        if not cap.isOpened():
+            raise RuntimeError(f"‼️ [ERROR] Failed to open video file: {video_path}")
+                
+        width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps    = int(cap.get(cv2.CAP_PROP_FPS))
+        out    = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
         
-        # Process the buffered frames
-        for frame in frames_buffer:
-            results = model(frame, verbose=False)
-            for box in results[0].boxes:
-                if int(box.cls[0]) == CF.CLASS_MAP['player']:
-                    crop = self.get_shirt_crop(frame, box)
-                    if crop.size > 0:
-                        # Get average color of the SHIRT only
-                        avg_color = np.mean(crop, axis=(0, 1))
-                        player_colors.append(avg_color)
+        teamClassifier = TeamClassifier()
+        tracking_data = []
+        
+        # --- PHASE 1: Calibration ---
+        frames_buffer = []
+        for _ in range(60):
+            ret, frame = cap.read()
+            if not ret: break
+            frames_buffer.append(frame)
+        
+        teamClassifier.train(frames_buffer, self.model)
+        
+        # Reset video to start
+        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        frame_idx = 0
+        print("Starting video processing...")
+
+        while True:
+            ret, frame = cap.read()
+            if not ret: break
             
-        if len(player_colors) > 0:
-            # Force 2 clusters (Team A vs Team B)
-            self.kmeans = KMeans(n_clusters=2, n_init=10, random_state=42)
-            self.kmeans.fit(player_colors)
-            print("Done. Team colors learned.")
-
-    def get_team(self, frame, box, track_id):
-        # 1. No Flickering: If ID is known, return saved team
-        if track_id in self.player_id_to_team:
-            return self.player_id_to_team[track_id]
-
-        # 2. Get Shirt Color
-        crop = self.get_shirt_crop(frame, box)
-        if crop.size == 0: return 'team_0' # Fallback
-
-        avg_color = np.mean(crop, axis=(0, 1)).reshape(1, -1)
-        
-        # 3. Predict
-        label = self.kmeans.predict(avg_color)[0]
-        team_name = f'team_{label}'
-
-        # Assign jersey number (1–11 per team)
-        if track_id not in self.team_to_jersey_map[team_name]:
-            jersey = self.next_jersey_number[team_name]
-            if jersey <= 11:
-                self.team_to_jersey_map[team_name][track_id] = jersey
-                self.next_jersey_number[team_name] += 1
-            else:
-                self.team_to_jersey_map[team_name][track_id] = 11
-
-        self.player_id_to_team[track_id] = team_name
-        return team_name
-
-def ObjectDetection(video_path=CF.IP_VID_PATH_OBJ_DET, output_path=CF.OP_VID_PATH_OBJ_DET):
-    # ------------------ Check input video path ------------------
-    if not os.path.exists(video_path):
-        raise FileNotFoundError(f"‼️ [ERROR] Video path does not exist: {video_path}")
-
-    if not os.path.isfile(video_path):
-        raise ValueError(f"‼️ [ERROR] Provided path is not a file: {video_path}")
-
-    # ------------------ Check YOLO model path ------------------
-    if not os.path.exists(CF.YOLO_MODEL_PATH):
-        raise FileNotFoundError(
-            f"‼️ [ERROR] YOLO model not found at: {CF.YOLO_MODEL_PATH}"
-        )
-    model = YOLO(CF.YOLO_MODEL_PATH)
-
-    # ------------------ Try opening video ------------------
-    cap = cv2.VideoCapture(video_path)
-
-    if not cap.isOpened():
-        raise RuntimeError(
-            f"‼️ [ERROR] Failed to open video file: {video_path}"
-        )
+            results = self.model.track(frame, persist=True, tracker="bytetrack.yaml", conf=0.1, verbose=False)
             
-    tracking_data = []
-    
-    width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps    = int(cap.get(cv2.CAP_PROP_FPS))
-    out    = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
-    
-    teamClassifier = TeamClassifier()
-    
-    # --- PHASE 1: Calibration ---
-    # Read 60 frames to learn colors
-    frames_buffer = []
-    for _ in range(60):
-        ret, frame = cap.read()
-        if not ret: break
-        frames_buffer.append(frame)
-    
-    # Train the classifier on these frames
-    teamClassifier.train(frames_buffer, model)
-    
-    # Reset video to start
-    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-    frame_idx = 0
-    print("Starting processing...")
+            if results[0].boxes is not None:
+                for box in results[0].boxes:
+                    cls_id = int(box.cls[0])
+                    conf = float(box.conf[0])
+                    
+                    # Video uses persistent tracking IDs
+                    if box.id is not None:
+                        track_id = int(box.id[0])
+                        self._annotate_and_log(frame, box, cls_id, conf, track_id, teamClassifier, tracking_data, frame_idx)
 
-    while True:
-        ret, frame = cap.read()
-        if not ret: break
+            out.write(frame)
+            frame_idx += 1
+            if frame_idx % 50 == 0: print(f"Frame {frame_idx} processed")
+
+        cap.release()
+        out.release()
+        print(f"\nObject detection done! Saved to {output_path}\n")
+
+        return pd.DataFrame(tracking_data, columns=['Frame', 'ID', 'Team', 'X', 'Y'])
+
+    def process_image(self, image_path, output_path=None):
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"‼️ [ERROR] Image path does not exist: {image_path}")
+
+        frame = cv2.imread(image_path)
+        if frame is None:
+            raise RuntimeError(f"‼️ [ERROR] Failed to open image: {image_path}")
+            
+        teamClassifier = TeamClassifier()
+        teamClassifier.train([frame], self.model)
         
-        # High-sensitivity tracking for Ball (conf=0.1), stricter for players later
-        results = model.track(frame, persist=True, tracker="bytetrack.yaml", conf=0.1, verbose=False)
+        tracking_data = []
+        pseudo_track_id = 1 
+        accepted_centers = [] # Tracks where we've already placed a player
+        
+        # Sort boxes by highest confidence first
+        results = self.model.predict(frame, conf=0.1, verbose=False)
         
         if results[0].boxes is not None:
-            boxes = results[0].boxes
-            for box in boxes:
+            sorted_boxes = sorted(results[0].boxes, key=lambda b: float(b.conf[0]), reverse=True)
+            
+            for box in sorted_boxes:
                 cls_id = int(box.cls[0])
                 conf = float(box.conf[0])
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
-
-                # --- BALL ---
-                if cls_id == CF.CLASS_MAP['ball']:
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), CF.COLORS['ball'], 2)
-                    
-                # --- PLAYERS ---
-                elif cls_id == CF.CLASS_MAP['player']:
-                    # Only accept players with decent confidence
-                    if conf > 0.4 and box.id is not None:
-                        track_id = int(box.id[0])
-                        team = teamClassifier.get_team(frame, box, track_id)
-                        if team is None:
-                            continue
-
-                        jersey_id = teamClassifier.team_to_jersey_map[team][track_id]
-                        color = CF.COLORS[team]
-
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-
-                        # Compute center
-                        cx = int((x1 + x2) / 2)
-                        cy = int((y1 + y2) / 2)
-
-                        tracking_data.append([frame_idx, jersey_id, team, cx, cy])
-
-                # --- REF & GK ---
-                elif cls_id == CF.CLASS_MAP['referee'] and conf > 0.4:
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), CF.COLORS['referee'], 2)
-                    cv2.putText(frame, "Ref", (x1, y1-5), 0, 0.5, CF.COLORS['referee'], 2)
+                cx, cy = int((x1 + x2) / 2), int((y1 + y2) / 2)
                 
-                elif cls_id == CF.CLASS_MAP['goalkeeper'] and conf > 0.4 and box.id is not None:
-                    track_id = int(box.id[0])
-                    team = teamClassifier.get_team(frame, box, track_id)
-                    if team is None:
-                        continue
+                # Spatial NMS: Ignore duplicate boxes around the same human
+                if cls_id == CF.CLASS_MAP['player'] and conf > 0.4:
+                    is_duplicate = any(np.sqrt((cx - acx)**2 + (cy - acy)**2) < 40 for acx, acy in accepted_centers)
+                    if is_duplicate: continue
+                    
+                    accepted_centers.append((cx, cy))
+                    self._annotate_and_log(frame, box, cls_id, conf, pseudo_track_id, teamClassifier, tracking_data, 0)
+                    pseudo_track_id += 1 
+                
+                elif cls_id in [CF.CLASS_MAP['goalkeeper'], CF.CLASS_MAP['referee']] and conf > 0.4:
+                    self._annotate_and_log(frame, box, cls_id, conf, pseudo_track_id, teamClassifier, tracking_data, 0)
+                    if cls_id == CF.CLASS_MAP['goalkeeper']: pseudo_track_id += 1
 
-                    jersey_id = teamClassifier.team_to_jersey_map[team][track_id]
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), CF.COLORS['goalkeeper'], 2)
-                    cv2.putText(frame, "GK", (x1, y1-5), 0, 0.5, CF.COLORS['goalkeeper'], 2)
-
-                    cx = int((x1 + x2) / 2)
-                    cy = int((y1 + y2) / 2)
-
-                    tracking_data.append([frame_idx, jersey_id, team, cx, cy])
-
-        out.write(frame)
-        frame_idx += 1
-        if frame_idx % 50 == 0: print(f"Frame {frame_idx} processed")
-
-    cap.release()
-    out.release()
-    print("\nObject detection done!\n")
-
-    df = pd.DataFrame(tracking_data, columns=['Frame', 'ID', 'Team', 'X', 'Y'])
-    return df
-
+        if output_path:
+            cv2.imwrite(output_path, frame)
+            print(f"Image saved to {output_path}")
+            
+        df = pd.DataFrame(tracking_data, columns=['Frame', 'ID', 'Team', 'X', 'Y'])
+        return df, frame

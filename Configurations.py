@@ -10,6 +10,7 @@ FORMATIONS_INFO_DB = "Data/Formations_info_transformed.csv"
 MY_TEAM_NAME = "Home"
 OPPONENT_TEAM_NAME = "Away"
 
+IP_IMG_PATH_OBJ_DET = "Data/Raw/input.png"
 IP_VID_PATH_OBJ_DET = "Data/Raw/input_video_obj_det.mp4"
 OP_VID_PATH_OBJ_DET = "Data/Raw/output_video_obj_det.mp4"
 
