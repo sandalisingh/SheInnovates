@@ -8,6 +8,7 @@ import pandas as pd
 from FormationDetector import FormationDetector, get_info_for_formation
 from TacticalAnalyzer import TacticalAnalyzer
 import Configurations as CF
+from Counter_formation_predictor import predict_counter_strategy
 
 def voronoi_finite_polygons_2d(vor, radius=1000):
     new_regions = []
@@ -264,9 +265,10 @@ class InteractiveVoronoiPitch:
         central_control = f"{CF.MY_TEAM_NAME} dominance" if center_h > center_a else f"{CF.OPPONENT_TEAM_NAME} dominance"
         overloads = f"{CF.MY_TEAM_NAME} creating overloads" if over_h > over_a else f"{CF.OPPONENT_TEAM_NAME} creating overloads"
 
-        home_row = get_info_for_formation(self.home_form_str)
-        away_row = get_info_for_formation(self.away_form_str)
-        home_advice, counter_formations = self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row)
+        home_form_info = get_info_for_formation(self.home_form_str)
+        away_form_info = get_info_for_formation(self.away_form_str)
+
+        counter_formations, alternative_formation_suggestions = predict_counter_strategy(away_form_info['Structure'], away_form_info['Shape'], away_form_info['Mode'])
 
         pad_x = 2
         pad_y = 2
@@ -285,7 +287,6 @@ class InteractiveVoronoiPitch:
         )
         self.bottom_texts.append(self.ax.text(pad_x, top_y, home_text, ha="left", va="top", fontsize=10, linespacing=1.5))
 
-        counter_formations = "\n".join(counter_formations)
         control_text = (
             "Space Control\n"
             f"{CF.MY_TEAM_NAME}: {home_control:.1f}%\n"
