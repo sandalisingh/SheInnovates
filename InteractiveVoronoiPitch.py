@@ -1,10 +1,10 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon, Rectangle, Circle
+import plotly.graph_objects as go
 from scipy.spatial import Voronoi
 from shapely.geometry import Polygon as ShapelyPoly
 from shapely.geometry import box
-import pandas as pd
+from dash import Dash, dcc, html, Input, Output, State
+
 from FormationDetector import FormationDetector, get_info_for_formation
 from TacticalAnalyzer import TacticalAnalyzer
 import Configurations as CF
@@ -46,318 +46,369 @@ def voronoi_finite_polygons_2d(vor, radius=1000):
         new_regions.append(new_region.tolist())
     return new_regions, np.asarray(new_vertices)
 
-class InteractiveVoronoiPitch:
-    def __init__(self, home_coords, away_coords, home_form_str, away_form_str, home_mode, away_mode):
-        
-        # Initialize the ML Detector here so we can use it to recalculate on drag
-        self.formation_detector = FormationDetector()
-        
-        # Clean the strings so "Form" doesn't duplicate the "Mode"
-        self.home_form_base = home_form_str.replace(home_mode, "").strip()
-        self.away_form_base = away_form_str.replace(away_mode, "").strip()
-        
-        self.home_mode = home_mode
-        self.away_mode = away_mode
-        
-        # Store full strings for database lookups (Counter Formations)
-        self.home_form_str = home_form_str
-        self.away_form_str = away_form_str
 
-        self.fig, self.ax = plt.subplots(figsize=(12, 8))
-        self.fig.canvas.manager.set_window_title(f"Tactical Board - {CF.MY_TEAM_NAME} vs {CF.OPPONENT_TEAM_NAME}")
-        
-        self.fig._interactive_board = self 
+class InteractiveVoronoiPitch:
+
+    def __init__(self, home_coords, away_coords,
+                 home_form_str, away_form_str,
+                 home_mode, away_mode):
 
         self.width = 105
         self.height = 68
-        self.bottom_panel_height = 30
 
-        self.tactical_anaylzer = TacticalAnalyzer()
-        self.draw_pitch()
-        
+        self.formation_detector = FormationDetector()
+        self.tactical_analyzer = TacticalAnalyzer()
+
         self.home_coords = np.array(home_coords, dtype=float)
         self.away_coords = np.array(away_coords, dtype=float)
+
+        self.home_form_str = home_form_str
+        self.away_form_str = away_form_str
+        self.home_mode = home_mode
+        self.away_mode = away_mode
+
         self.pitch_poly = box(0, 0, self.width, self.height)
-        
-        self.voronoi_patches = []
-        self.home_texts = []
-        self.away_texts = []
-        self.home_scatter = None
-        self.away_scatter = None
-        
-        self.selected_point = None
-        self.selected_team = None
 
-        self.refresh_graphics()
-        
-        self.fig.canvas.mpl_connect('button_press_event', self.on_press)
-        self.fig.canvas.mpl_connect('button_release_event', self.on_release)
-        self.fig.canvas.mpl_connect('motion_notify_event', self.on_motion)
+        self.app = Dash(__name__)
+        self.build_layout()
+        self.register_callbacks()
 
-    def draw_pitch(self):
-        self.ax.set_xlim(0, self.width)
-        self.ax.set_ylim(-self.bottom_panel_height, self.height)
-        self.ax.set_aspect('equal')
-        self.ax.axis('off')
+    # =============================
+    # PITCH LINES
+    # =============================
+    def draw_pitch_lines(self, fig):
+        # Using a semi-transparent black for pitch lines to heavily contrast with white Voronoi lines
+        line_dict = dict(color="rgba(0, 0, 0, 0.4)", width=2.5) 
         
-        self.ax.add_patch(Rectangle((0, 0), self.width, self.height, color=CF.PITCH_COLOUR, zorder=0))
+        # Outer boundary
+        fig.add_trace(go.Scatter(x=[0, self.width, self.width, 0, 0], y=[0, 0, self.height, self.height, 0], mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
+        # Halfway line
+        fig.add_trace(go.Scatter(x=[self.width/2, self.width/2], y=[0, self.height], mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
         
-        line_props = {'linewidth': 2, 'color': 'white', 'zorder': 1}
-        self.ax.add_patch(Rectangle((0, 0), self.width, self.height, fill=False, **line_props))
-        self.ax.plot([self.width/2, self.width/2], [0, self.height], **line_props)
-        self.ax.add_patch(Circle((self.width/2, self.height/2), 9.15, fill=False, **line_props))
-        self.ax.add_patch(Rectangle((0, (self.height/2)-20.16), 16.5, 40.32, fill=False, **line_props))
-        self.ax.add_patch(Rectangle((self.width-16.5, (self.height/2)-20.16), 16.5, 40.32, fill=False, **line_props))
+        # Center circle
+        theta = np.linspace(0, 2*np.pi, 100)
+        cx, cy, r = self.width/2, self.height/2, 9.15
+        fig.add_trace(go.Scatter(x=cx + r*np.cos(theta), y=cy + r*np.sin(theta), mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
+        
+        # Penalty Boxes
+        fig.add_trace(go.Scatter(x=[0, 16.5, 16.5, 0], y=[self.height/2 - 20.16, self.height/2 - 20.16, self.height/2 + 20.16, self.height/2 + 20.16], mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
+        fig.add_trace(go.Scatter(x=[self.width, self.width-16.5, self.width-16.5, self.width], y=[self.height/2 - 20.16, self.height/2 - 20.16, self.height/2 + 20.16, self.height/2 + 20.16], mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
+        
+        # 6 yard boxes
+        fig.add_trace(go.Scatter(x=[0, 5.5, 5.5, 0], y=[self.height/2 - 9.16, self.height/2 - 9.16, self.height/2 + 9.16, self.height/2 + 9.16], mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
+        fig.add_trace(go.Scatter(x=[self.width, self.width-5.5, self.width-5.5, self.width], y=[self.height/2 - 9.16, self.height/2 - 9.16, self.height/2 + 9.16, self.height/2 + 9.16], mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
+        
+        # Goals
+        fig.add_trace(go.Scatter(x=[-2, 0, 0, -2, -2], y=[self.height/2 - 3.66, self.height/2 - 3.66, self.height/2 + 3.66, self.height/2 + 3.66, self.height/2 - 3.66], mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
+        fig.add_trace(go.Scatter(x=[self.width+2, self.width, self.width, self.width+2, self.width+2], y=[self.height/2 - 3.66, self.height/2 - 3.66, self.height/2 + 3.66, self.height/2 + 3.66, self.height/2 - 3.66], mode="lines", line=line_dict, hoverinfo="skip", showlegend=False))
+        
+        # Penalty spots
+        fig.add_trace(go.Scatter(x=[11, self.width-11], y=[self.height/2, self.height/2], mode="markers", marker=dict(color="rgba(0,0,0,0.4)", size=6), hoverinfo="skip", showlegend=False))
 
-        self.bottom_panel = Rectangle(
-            (0, -self.bottom_panel_height),
-            self.width,
-            self.bottom_panel_height,
-            facecolor="#f4f6f7", edgecolor="black", linewidth=2, zorder=0
+    # =============================
+    # BUILD FIGURE & ANALYSIS PANEL
+    # =============================
+    def build_figure_and_analysis(self, home_coords, away_coords, home_form, away_form, home_mode, away_mode):
+
+        fig = go.Figure()
+
+        # Margins significantly reduced because text is no longer overlaying the plot
+        fig.update_layout(
+            plot_bgcolor=CF.PITCH_COLOUR,
+            paper_bgcolor="#111111", # Dark background outside the pitch
+            dragmode=False,
+            margin=dict(l=20, r=20, t=20, b=20),
+            xaxis=dict(range=[0, self.width], visible=False, fixedrange=True, scaleanchor="y", scaleratio=1),
+            yaxis=dict(range=[0, self.height], visible=False, fixedrange=True),
         )
-        self.ax.add_patch(self.bottom_panel)
 
-        self.left_w = self.width * 0.35
-        self.mid_w  = self.width * 0.25
-        self.right_w = self.width * 0.40 
+        self.draw_pitch_lines(fig)
 
-        self.ax.plot([self.left_w, self.left_w], [-self.bottom_panel_height, 0], color="black", lw=1.5)
-        self.ax.plot([self.left_w + self.mid_w, self.left_w + self.mid_w], [-self.bottom_panel_height, 0], color="black", lw=1.5)
+        # === COMPUTE VORONOI & AREA ===
+        all_points = np.vstack((home_coords, away_coords))
+        epsilon = 1e-6 
+        all_points = all_points + np.random.uniform(-epsilon, epsilon, all_points.shape)
+        vor = Voronoi(all_points)
+        regions, vertices = voronoi_finite_polygons_2d(vor)
 
-    def compute_voronoi(self):
-        try:
-            all_points = np.vstack((self.home_coords, self.away_coords))
-            epsilon = 1e-6
-            all_points = all_points + np.random.uniform(-epsilon, epsilon, all_points.shape)
-
-            vor = Voronoi(all_points)
-            regions, vertices = voronoi_finite_polygons_2d(vor)
-
-        except Exception as e:
-            print(f"⚠️ Math Error: {e}")
-            return [], [], 0, 0
-
-        regions_polys = []
-        space_data = []
-        h_area = 0
-        a_area = 0
-
-        for i, region in enumerate(regions):
-            polygon_points = vertices[region]
-            poly = ShapelyPoly(polygon_points)
-            
-            intersection = poly.intersection(self.pitch_poly)
-            
-            if not intersection.is_empty:
-                is_home = i < len(self.home_coords)
-                team_str = 'home' if is_home else 'away'
-                player_idx = (i + 1) if is_home else (i - len(self.home_coords) + 1)
-                
-                space_data.append({
-                    'id': player_idx,
-                    'team': team_str,
-                    'area': intersection.area,
-                    'centroid': all_points[i]
-                })
-
-                geoms = [intersection] if intersection.geom_type == 'Polygon' else intersection.geoms
-                for p in geoms:
-                    regions_polys.append((p, is_home, player_idx))
-                    if is_home: h_area += p.area
-                    else: a_area += p.area
-                    
-        return regions_polys, space_data, h_area, a_area
-
-    def get_goalkeepers(self):
-        home_gk = np.argmin(self.home_coords[:,0])
-        away_gk = np.argmax(self.away_coords[:,0])
-        return home_gk, away_gk
-
-    def refresh_graphics(self):
-        if hasattr(self, "bottom_texts"):
-            for t in self.bottom_texts:
-                t.remove()
-
-        self.bottom_texts = []
-
-        for p in self.voronoi_patches:
-            p.remove()
-        self.voronoi_patches = []
-
-        # 1. COMPUTE 22-MAN VORONOI (Used for visual rendering & possession control)
-        regions, space_data_22, h_area, a_area = self.compute_voronoi()
-
-        # 2. COMPUTE 11-MAN VORONOI (Used exclusively for structural vulnerabilities)
-        home_11_space = self.tactical_anaylzer.analyze_space_control(self.home_coords)
-        away_11_space = self.tactical_anaylzer.analyze_space_control(self.away_coords)
-
-        # Identify vulnerabilities based purely on isolated team shape
-        home_vuln = self.tactical_anaylzer.identify_team_vulnerabilities(home_11_space, 'home', CF.MY_TEAM_NAME)
-        away_vuln = self.tactical_anaylzer.identify_team_vulnerabilities(away_11_space, 'away', CF.OPPONENT_TEAM_NAME)
-        
-        # Combine and sort so biggest gaps appear first
+        home_space = self.tactical_analyzer.analyze_space_control(home_coords)
+        away_space = self.tactical_analyzer.analyze_space_control(away_coords)
+        home_vuln = self.tactical_analyzer.identify_team_vulnerabilities(home_space, 'home', CF.MY_TEAM_NAME)
+        away_vuln = self.tactical_analyzer.identify_team_vulnerabilities(away_space, 'away', CF.OPPONENT_TEAM_NAME)
         vulnerabilities = home_vuln + away_vuln
         vulnerabilities.sort(key=lambda v: v['area'], reverse=True)
 
-        # 3. DRAW THE 22-MAN REGIONS WITH DARKER SHADES FOR VULNERABLE PLAYERS
-        for poly, is_home, player_idx in regions:
+        h_area = 0
+        a_area = 0
+
+        # Draw Voronoi 
+        for i, region in enumerate(regions):
+            polygon = vertices[region]
+            poly = ShapelyPoly(polygon)
+            inter = poly.intersection(self.pitch_poly)
+
+            if inter.is_empty:
+                continue
+
+            is_home = i < len(home_coords)
             team_str = 'home' if is_home else 'away'
+            player_idx = (i + 1) if is_home else (i - len(home_coords) + 1)
+
+            if is_home: h_area += inter.area
+            else: a_area += inter.area
+
+            is_vulnerable = any(v['player_id'] == player_idx and v['team_tag'] == team_str for v in vulnerabilities)
+            alpha = 0.85 if is_vulnerable else 0.35
             color = CF.HOME_PLAYER_COLOUR if is_home else CF.AWAY_PLAYER_COLOUR
-            
-            # Check if this player was flagged in the 11-man structural calculation
-            is_vulnerable = any(
-                v['player_id'] == player_idx and v['team_tag'] == team_str 
-                for v in vulnerabilities
-            )
-            
-            alpha = 0.85 if is_vulnerable else 0.35 
-            
-            x, y = poly.exterior.xy
-            mpl_poly = Polygon(list(zip(x, y)), facecolor=color, edgecolor='white', alpha=alpha, zorder=2)
-            self.ax.add_patch(mpl_poly)
-            self.voronoi_patches.append(mpl_poly)
 
-        home_gk, away_gk = self.get_goalkeepers()
-        home_colors = [CF.HOME_PLAYER_COLOUR] * len(self.home_coords)
-        away_colors = [CF.AWAY_PLAYER_COLOUR] * len(self.away_coords)
-        home_sizes = [250] * len(self.home_coords)
-        away_sizes = [250] * len(self.away_coords)
+            geoms = [inter] if inter.geom_type == 'Polygon' else inter.geoms
+            for p in geoms:
+                x, y = map(list, p.exterior.xy)
+                fig.add_trace(go.Scatter(
+                    x=x, y=y, fill="toself", mode="lines",
+                    line=dict(color="white", width=1.5),
+                    fillcolor=color, opacity=alpha,
+                    hoverinfo="skip", showlegend=False
+                ))
 
-        home_colors[home_gk] = CF.HOME_GK_COLOUR
-        away_colors[away_gk] = CF.AWAY_GK_COLOUR
-        home_sizes[home_gk] = 380
-        away_sizes[away_gk] = 380
+        # === METRICS FOR TEXTUAL ANALYSIS ===
+        total_area = self.width * self.height
+        home_control = (h_area / total_area) * 100 if total_area else 0
+        away_control = (a_area / total_area) * 100 if total_area else 0
 
-        if self.home_scatter: self.home_scatter.remove()
-        if self.away_scatter: self.away_scatter.remove()
-
-        self.home_scatter = self.ax.scatter(self.home_coords[:,0], self.home_coords[:,1], c=home_colors, s=home_sizes, edgecolors='black', zorder=10)
-        self.away_scatter = self.ax.scatter(self.away_coords[:,0], self.away_coords[:,1], c=away_colors, s=away_sizes, edgecolors='black', zorder=10)
-
-        for t in self.home_texts + self.away_texts: t.remove()
-        self.home_texts = []
-        self.away_texts = []
-
-        for i,(x,y) in enumerate(self.home_coords):
-            self.home_texts.append(self.ax.text(x,y,str(i+1), color='white',ha='center',va='center', fontweight='bold',zorder=11))
-        for i,(x,y) in enumerate(self.away_coords):
-            self.away_texts.append(self.ax.text(x,y,str(i+1), color='white',ha='center',va='center', fontweight='bold',zorder=11))
-
-        if vulnerabilities:
-            # Show up to 4 biggest weaknesses
-            text_str = "WEAKNESSES:\n" + "\n".join([v['detail'] for v in vulnerabilities[:4]])
-            props = dict(boxstyle='round', facecolor='black', alpha=0.8)
-            self.ax.text(0.02, 0.98, text_str, transform=self.ax.transAxes, fontsize=9, verticalalignment='top', color='red', bbox=props, zorder=15)
-            
-        total = self.width * self.height
-        home_control = (h_area / total) * 100 if total else 0
-        away_control = (a_area / total) * 100 if total else 0
-
-        home_compact = self.tactical_anaylzer.compactness(self.home_coords)
-        away_compact = self.tactical_anaylzer.compactness(self.away_coords)
-        home_width = self.tactical_anaylzer.width_usage(self.home_coords)
-        away_width = self.tactical_anaylzer.width_usage(self.away_coords)
-        center_h, center_a = self.tactical_anaylzer.central_control(self.home_coords, self.away_coords)
-        over_h, over_a = self.tactical_anaylzer.overload_score(self.home_coords, self.away_coords)
+        home_compact = self.tactical_analyzer.compactness(home_coords)
+        away_compact = self.tactical_analyzer.compactness(away_coords)
+        home_width = self.tactical_analyzer.width_usage(home_coords)
+        away_width = self.tactical_analyzer.width_usage(away_coords)
+        center_h, center_a = self.tactical_analyzer.central_control(home_coords, away_coords)
+        over_h, over_a = self.tactical_analyzer.overload_score(home_coords, away_coords)
 
         compactness = f"{CF.MY_TEAM_NAME} tighter block" if home_compact < away_compact else f"{CF.OPPONENT_TEAM_NAME} tighter block"
         width_analysis = f"{CF.MY_TEAM_NAME} stretching pitch" if home_width > away_width else f"{CF.OPPONENT_TEAM_NAME} stretching pitch"
         central_control = f"{CF.MY_TEAM_NAME} dominance" if center_h > center_a else f"{CF.OPPONENT_TEAM_NAME} dominance"
         overloads = f"{CF.MY_TEAM_NAME} creating overloads" if over_h > over_a else f"{CF.OPPONENT_TEAM_NAME} creating overloads"
 
-        home_form_info = get_info_for_formation(self.home_form_str)
-        away_form_info = get_info_for_formation(self.away_form_str)
-
-        counter_formations, alternative_formation_suggestions = predict_counter_strategy(away_form_info['Structure'], away_form_info['Shape'], away_form_info['Mode'])
-
-        pad_x = 2
-        pad_y = 2
-        top_y = -pad_y
-
-        home_display = "Unclear (Low Confidence)" if "Unclear" in self.home_form_base else self.home_form_base
-        away_display = "Unclear (Low Confidence)" if "Unclear" in self.away_form_base else self.away_form_base
-
-        home_text = (
-            f"[{CF.MY_TEAM_NAME}]\n"  +
-            f"Form: {home_display}\n" + 
-            f"Mode: {self.home_mode}\n\n" +
-            f"[{CF.OPPONENT_TEAM_NAME}]\n" +
-            f"Form: {away_display}\n" +
-            f"Mode: {self.away_mode}"
-        )
-        self.bottom_texts.append(self.ax.text(pad_x, top_y, home_text, ha="left", va="top", fontsize=10, linespacing=1.5))
-
-        control_text = (
-            "Space Control\n"
-            f"{CF.MY_TEAM_NAME}: {home_control:.1f}%\n"
-            f"{CF.OPPONENT_TEAM_NAME}: {away_control:.1f}%\n\n"
-        )
-        if counter_formations:
-            control_text += f"Counters:\n{counter_formations}"
-        else:
-            control_text += "Counters:\nN/A"
-
-        self.bottom_texts.append(self.ax.text(self.left_w + pad_x, top_y, control_text, ha="left", va="top", fontsize=10, linespacing=1.5))
-
-        structure_text = (
-            f"Compactness:\n{compactness}\n"
-            f"Width:\n{width_analysis}\n"
-            f"Central:\n{central_control}\n"
-            f"Overloads:\n{overloads}"
-        )
-
-        self.bottom_texts.append(self.ax.text(self.left_w + self.mid_w + pad_x, top_y, structure_text, ha="left", va="top", fontsize=10, linespacing=1.5, wrap=True))
-
-        self.fig.canvas.draw_idle()
-
-    def on_press(self, event):
-        if event.inaxes != self.ax: return
-        if event.xdata is None or event.ydata is None: return 
+        counter_formations = "N/A"
+        try:
+            away_form_info = get_info_for_formation(away_form)
+            if away_form_info and 'Structure' in away_form_info:
+                counters, _ = predict_counter_strategy(away_form_info['Structure'], away_form_info['Shape'], away_form_info['Mode'])
+                if counters: counter_formations = counters
+        except Exception:
+            pass
         
-        click = np.array([event.xdata, event.ydata])
-        
-        dist_h = np.linalg.norm(self.home_coords - click, axis=1)
-        if np.min(dist_h) < 5.0:
-            self.selected_point = np.argmin(dist_h)
-            self.selected_team = 'home'
-            return
+        home_display = "Unclear" if not home_form or "Unclear" in home_form else str(home_form).replace(str(home_mode), "").strip()
+        away_display = "Unclear" if not away_form or "Unclear" in away_form else str(away_form).replace(str(away_mode), "").strip()
 
-        dist_a = np.linalg.norm(self.away_coords - click, axis=1)
-        if np.min(dist_a) < 5.0:
-            self.selected_point = np.argmin(dist_a)
-            self.selected_team = 'away'
-
-    def on_motion(self, event):
-        if self.selected_point is None or event.inaxes != self.ax: return
-        if event.xdata is None or event.ydata is None: return 
-        
-        x, y = np.clip(event.xdata, 0, self.width), np.clip(event.ydata, 0, self.height)
-        
-        if self.selected_team == 'home':
-            self.home_coords[self.selected_point] = [x, y]
-            self.home_scatter.set_offsets(self.home_coords)
-            self.home_texts[self.selected_point].set_position((x, y))
-        else:
-            self.away_coords[self.selected_point] = [x, y]
-            self.away_scatter.set_offsets(self.away_coords)
-            self.away_texts[self.selected_point].set_position((x, y))
+        # === CONSTRUCT HTML SIDE PANEL ===
+        analysis_div = html.Div([
+            # Home Team Info
+            html.Span(f"{CF.MY_TEAM_NAME.upper()}", style={"color": CF.HOME_PLAYER_COLOUR, "fontSize": "16px", "fontWeight": "bold"}), html.Br(),
+            html.Span(f"Form: {home_display}"), html.Br(),
+            html.Span(f"Mode: {home_mode}"), html.Br(), html.Br(),
             
-        self.fig.canvas.draw_idle()
-
-    def on_release(self, event):
-        if self.selected_point is not None:
-            self.selected_point = None
-            self.selected_team = None
+            # Away Team Info
+            html.Span(f"{CF.OPPONENT_TEAM_NAME.upper()}", style={"color": CF.AWAY_PLAYER_COLOUR, "fontSize": "16px", "fontWeight": "bold"}), html.Br(),
+            html.Span(f"Form: {away_display}"), html.Br(),
+            html.Span(f"Mode: {away_mode}"), html.Br(),
             
-            # Recalculate formations based on newly dragged positions
-            _, new_home_mode, new_home_str = self.formation_detector.detect_formation_from_player_positions(self.home_coords, team_side="left")
-            self.home_form_base = new_home_str.replace(new_home_mode, "").strip()
-            self.home_mode = new_home_mode
-            self.home_form_str = new_home_str
-
-            _, new_away_mode, new_away_str = self.formation_detector.detect_formation_from_player_positions(self.away_coords, team_side="right")
-            self.away_form_base = new_away_str.replace(new_away_mode, "").strip()
-            self.away_mode = new_away_mode
-            self.away_form_str = new_away_str
+            html.Hr(style={"borderTop": "1px solid #444", "margin": "15px 0"}),
             
-            self.refresh_graphics()
+            # Space Control
+            html.Span("SPACE CONTROL", style={"color": "#FFF", "fontSize": "14px", "fontWeight": "bold"}), html.Br(),
+            html.Span(f"{CF.MY_TEAM_NAME}: {home_control:.1f}%"), html.Br(),
+            html.Span(f"{CF.OPPONENT_TEAM_NAME}: {away_control:.1f}%"), html.Br(), html.Br(),
+            
+            # Counters
+            html.Span(f"COUNTERS TO {CF.OPPONENT_TEAM_NAME}", style={"color": "#FFF", "fontSize": "14px", "fontWeight": "bold"}), html.Br(),
+            html.Span(f"{counter_formations}"), html.Br(),
+            
+            html.Hr(style={"borderTop": "1px solid #444", "margin": "15px 0"}),
+            
+            # Structure
+            html.Span("STRUCTURE", style={"color": "#FFF", "fontSize": "14px", "fontWeight": "bold"}), html.Br(),
+            html.Span(f"Compactness: {compactness}"), html.Br(),
+            html.Span(f"Width: {width_analysis}"), html.Br(),
+            html.Span(f"Central: {central_control}"), html.Br(),
+            html.Span(f"Overloads: {overloads}"), html.Br(), html.Br(),
+            
+        ], style={"fontFamily": "Arial, sans-serif", "color": "#E0E0E0", "fontSize": "13px", "lineHeight": "1.5"})
+
+        if vulnerabilities:
+            vuln_div = [
+                html.Span("WEAKNESSES", style={"color": "#ff4d4d", "fontSize": "14px", "fontWeight": "bold"}), html.Br()
+            ]
+            for v in vulnerabilities[:5]: # Show top 5 weaknesses
+                vuln_div.extend([html.Span(f"• {v['detail']}"), html.Br()])
+            
+            analysis_div.children.extend(vuln_div)
+
+
+        # === DRAGGABLE PLAYERS (Rendered as Shapes) ===
+        shapes = []
+        home_gk = np.argmin(home_coords[:, 0])
+        away_gk = np.argmax(away_coords[:, 0])
+
+        for i, (x, y) in enumerate(home_coords):
+            r = 1.6 if i == home_gk else 1.2
+            color = CF.HOME_GK_COLOUR if i == home_gk else CF.HOME_PLAYER_COLOUR
+            shapes.append(dict(
+                type="circle", x0=x-r, y0=y-r, x1=x+r, y1=y+r,
+                fillcolor=color, line=dict(color="black", width=1.5),
+                label=dict(text=str(i+1), font=dict(color="white", size=11, family="Arial Black"))
+            ))
+
+        for i, (x, y) in enumerate(away_coords):
+            r = 1.6 if i == away_gk else 1.2
+            color = CF.AWAY_GK_COLOUR if i == away_gk else CF.AWAY_PLAYER_COLOUR
+            shapes.append(dict(
+                type="circle", x0=x-r, y0=y-r, x1=x+r, y1=y+r,
+                fillcolor=color, line=dict(color="black", width=1.5),
+                label=dict(text=str(i+1), font=dict(color="white", size=11, family="Arial Black"))
+            ))
+
+        fig.update_layout(shapes=shapes)
+        return fig, analysis_div
+
+    # =============================
+    # LAYOUT
+    # =============================
+    def build_layout(self):
+        # Generate initial state 
+        fig, analysis_html = self.build_figure_and_analysis(
+            self.home_coords, self.away_coords, 
+            self.home_form_str, self.away_form_str, 
+            self.home_mode, self.away_mode
+        )
+        
+        self.app.layout = html.Div([
+            dcc.Store(id="player-store",
+                data={
+                    "home": self.home_coords.tolist(),
+                    "away": self.away_coords.tolist(),
+                    "home_form": self.home_form_str,
+                    "away_form": self.away_form_str,
+                    "home_mode": self.home_mode,
+                    "away_mode": self.away_mode
+                }),
+                
+            html.Div([
+                # Left side: The Interactive Graph
+                dcc.Graph(
+                    id="pitch",
+                    figure=fig,
+                    style={"flex": "1", "height": "95vh"}, # Fills the left area
+                    config={
+                        "editable": True, 
+                        "edits": {
+                            "shapePosition": True,  
+                            "annotationPosition": False,
+                            "legendPosition": False,
+                            "titleText": False,
+                        },
+                        "displayModeBar": False
+                    }
+                ),
+                # Right side: The Dedicated Sidebar for Text Panel
+                html.Div(
+                    id="analysis-panel",
+                    children=analysis_html,
+                    style={
+                        "width": "350px", 
+                        "minWidth": "350px",
+                        "backgroundColor": "#1A1A1A", 
+                        "padding": "25px", 
+                        "height": "95vh",
+                        "overflowY": "auto",
+                        "boxSizing": "border-box",
+                        "borderLeft": "3px solid #333"
+                    }
+                )
+            ], style={"display": "flex", "flexDirection": "row", "width": "100%", "backgroundColor": "#111111"})
+        ])
+
+    # =============================
+    # CALLBACK
+    # =============================
+    def register_callbacks(self):
+
+        @self.app.callback(
+            Output("pitch", "figure"),
+            Output("analysis-panel", "children"),
+            Output("player-store", "data"),
+            Input("pitch", "relayoutData"),
+            State("player-store", "data")
+        )
+        def update_on_drag(relayoutData, store):
+
+            home = np.array(store["home"])
+            away = np.array(store["away"])
+            h_form = store.get("home_form", self.home_form_str)
+            a_form = store.get("away_form", self.away_form_str)
+            h_mode = store.get("home_mode", self.home_mode)
+            a_mode = store.get("away_mode", self.away_mode)
+
+            # Check if drag event happened
+            if not relayoutData:
+                fig, analysis_div = self.build_figure_and_analysis(home, away, h_form, a_form, h_mode, a_mode)
+                return fig, analysis_div, store
+
+            updated = False
+
+            if 'shapes' in relayoutData:
+                for idx, shape in enumerate(relayoutData['shapes']):
+                    cx = (shape.get('x0', 0) + shape.get('x1', 0)) / 2
+                    cy = (shape.get('y0', 0) + shape.get('y1', 0)) / 2
+                    
+                    if idx < 11: home[idx] = [cx, cy]
+                    else: away[idx - 11] = [cx, cy]
+                updated = True
+            else:
+                updates = {}
+                for key, val in relayoutData.items():
+                    if key.startswith('shapes['):
+                        idx = int(key.split('[')[1].split(']')[0])
+                        prop = key.split('.')[1] 
+                        if idx not in updates: updates[idx] = {}
+                        updates[idx][prop] = val
+
+                for idx, props in updates.items():
+                    if idx < 11: cx, cy = home[idx]
+                    else: cx, cy = away[idx - 11]
+                        
+                    if 'x0' in props and 'x1' in props: cx = (props['x0'] + props['x1']) / 2
+                    if 'y0' in props and 'y1' in props: cy = (props['y0'] + props['y1']) / 2
+                        
+                    cx = np.clip(cx, 0, self.width)
+                    cy = np.clip(cy, 0, self.height)
+
+                    if idx < 11: home[idx] = [cx, cy]
+                    else: away[idx - 11] = [cx, cy]
+                    updated = True
+
+            if updated:
+                try:
+                    _, h_mode, h_form = self.formation_detector.detect_formation_from_player_positions(home, team_side="left")
+                except Exception:
+                    h_mode, h_form = "Unclear", "Unclear"
+                    
+                try:
+                    _, a_mode, a_form = self.formation_detector.detect_formation_from_player_positions(away, team_side="right")
+                except Exception:
+                    a_mode, a_form = "Unclear", "Unclear"
+                
+                store["home"] = home.tolist()
+                store["away"] = away.tolist()
+                store["home_form"] = str(h_form)
+                store["away_form"] = str(a_form)
+                store["home_mode"] = str(h_mode)
+                store["away_mode"] = str(a_mode)
+
+            fig, analysis_div = self.build_figure_and_analysis(home, away, h_form, a_form, h_mode, a_mode)
+            return fig, analysis_div, store
+          
+    # =============================
+    # RUN
+    # =============================
+    def run(self):
+        self.app.run(debug=True)

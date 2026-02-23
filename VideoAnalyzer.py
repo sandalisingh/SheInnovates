@@ -183,9 +183,9 @@ class VideoAnalyzer:
 
         team_A_template, team_B_template = self.generate_formations()
 
-        InteractiveVoronoiPitch(
+        app = InteractiveVoronoiPitch(
             team_A_template, team_B_template,
             self.team_A_formation, self.team_B_formation,
             self.team_A_mode, self.team_B_mode
         )
-        plt.show()
+        app.run()

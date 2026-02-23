@@ -52,7 +52,7 @@ cd SheInnovates
 2. **Install dependencies:**
 Ensure you have PyTorch installed for your specific hardware (CUDA/MPS/CPU), then install the rest:
 ```bash
-pip install pandas numpy matplotlib scipy shapely scikit-learn opencv-python torch
+pip install pandas numpy matplotlib scipy shapely scikit-learn opencv-python torch dash plotly
 
 ```
 
