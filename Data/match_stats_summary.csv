@@ -1,0 +1,219 @@
+Match_ID,League,Date,Time,Team_Home,Team_Away,Score_Home,Score_Away,Home_Goal,Away_Goal,Home_Shots_on_target,Away_Shots_on_target,Home_Shots_off_target,Away_Shots_off_target,Home_Corner,Away_Corner,Home_Foul,Away_Foul,Home_Yellow_card,Away_Yellow_card,Home_Red_card,Away_Red_card,Home_Offside,Away_Offside,Home_Throw-in,Away_Throw-in,Home_Substitution,Away_Substitution,Home_Kick-off,Away_Kick-off
+england_epl_2015-02-21_Chelsea_vs_Burnley,england_epl,2015-02-21,18:00,Chelsea,Burnley,1,1,1,1,4,4,4,3,7,7,10,6,1,2,1,0,1,2,15,23,3,1,2,2
+england_epl_2015-02-21_Crystal_Palace_vs_Arsenal,england_epl,2015-02-21,18:00,Crystal Palace,Arsenal,1,2,1,2,3,3,2,2,10,1,14,13,1,3,0,0,2,3,33,24,3,3,3,2
+england_epl_2015-02-21_Swansea_vs_Manchester_United,england_epl,2015-02-21,18:00,Swansea,Manchester United,2,1,2,1,3,1,1,7,4,10,5,15,2,4,0,0,3,2,18,15,2,3,2,3
+england_epl_2015-02-22_Southampton_vs_Liverpool,england_epl,2015-02-22,19:15,Southampton,Liverpool,0,2,0,2,2,2,3,0,5,1,8,13,2,3,0,0,2,2,23,28,3,3,3,1
+england_epl_2015-08-08_Chelsea_vs_Swansea,england_epl,2015-08-08,19:30,Chelsea,Swansea,2,2,2,2,8,16,5,4,4,8,14,16,1,3,1,0,2,3,22,21,3,3,3,3
+england_epl_2015-08-29_Chelsea_vs_Crystal_Palace,england_epl,2015-08-29,17:00,Chelsea,Crystal Palace,1,2,1,2,14,7,10,5,7,7,7,15,1,1,0,0,0,2,12,24,3,3,3,2
+england_epl_2015-08-29_Manchester_City_vs_Watford,england_epl,2015-08-29,17:00,Manchester City,Watford,2,0,2,0,11,3,7,2,9,3,7,12,1,2,0,0,1,1,12,11,3,3,1,3
+england_epl_2015-09-12_Everton_vs_Chelsea,england_epl,2015-09-12,14:45,Everton,Chelsea,3,1,3,1,8,7,7,6,7,14,11,14,2,2,0,0,0,1,11,15,3,3,2,4
+england_epl_2015-09-12_Crystal_Palace_vs_Manchester_City,england_epl,2015-09-12,17:00,Crystal Palace,Manchester City,0,1,0,1,5,8,5,9,4,4,12,13,2,3,0,0,5,0,19,29,3,3,2,1
+england_epl_2015-09-19_Manchester_City_vs_West_Ham,england_epl,2015-09-19,19:30,Manchester City,West Ham,1,2,1,2,18,3,10,3,14,3,10,7,1,2,0,0,2,1,19,13,3,3,3,2
+england_epl_2015-09-26_Liverpool_vs_Aston_Villa,england_epl,2015-09-26,17:00,Liverpool,Aston Villa,3,2,3,2,18,6,4,5,11,1,9,11,0,0,0,0,2,1,18,13,1,2,3,4
+england_epl_2015-10-17_Chelsea_vs_Aston_Villa,england_epl,2015-10-17,17:00,Chelsea,Aston Villa,2,0,2,0,6,5,3,6,4,4,22,17,1,3,0,0,1,0,24,28,3,2,1,3
+england_epl_2015-10-31_Chelsea_vs_Liverpool,england_epl,2015-10-31,15:45,Chelsea,Liverpool,1,3,1,3,6,12,2,4,1,7,9,21,1,4,0,0,3,2,17,33,2,3,3,2
+england_epl_2015-11-07_Manchester_United_vs_West_Brom,england_epl,2015-11-07,18:00,Manchester United,West Brom,2,0,2,0,8,0,5,2,5,1,9,10,1,3,0,1,1,0,21,15,3,3,1,2
+england_epl_2015-11-21_Manchester_City_vs_Liverpool,england_epl,2015-11-21,20:30,Manchester City,Liverpool,1,4,1,4,6,11,5,2,9,5,4,12,0,3,0,0,1,5,35,16,3,3,5,2
+england_epl_2015-11-29_Tottenham_vs_Chelsea,england_epl,2015-11-29,15:00,Tottenham,Chelsea,0,0,0,0,9,3,2,3,4,4,14,9,4,2,0,0,2,4,38,30,2,2,1,1
+england_epl_2015-12-05_Chelsea_vs_Bournemouth,england_epl,2015-12-05,20:30,Chelsea,Bournemouth,0,1,0,1,11,4,7,7,10,3,9,10,2,1,0,0,0,0,21,18,2,1,2,2
+england_epl_2015-12-19_Chelsea_vs_Sunderland,england_epl,2015-12-19,18:00,Chelsea,Sunderland,3,1,3,1,8,4,6,7,2,2,9,7,1,3,0,0,0,0,22,17,3,3,2,3
+england_epl_2015-12-26_Manchester_City_vs_Sunderland,england_epl,2015-12-26,18:00,Manchester City,Sunderland,4,1,4,1,9,5,3,1,5,1,6,7,1,1,0,0,2,1,18,8,3,3,2,5
+england_epl_2016-01-03_Crystal_Palace_vs_Chelsea,england_epl,2016-01-03,16:30,Crystal Palace,Chelsea,0,3,0,3,1,4,3,2,5,7,8,9,3,0,0,0,1,0,17,20,3,2,4,1
+england_epl_2016-01-13_Chelsea_vs_West_Brom,england_epl,2016-01-13,22:45,Chelsea,West Brom,2,2,2,2,4,4,5,3,6,6,7,5,3,2,0,0,0,0,16,15,2,3,3,3
+england_epl_2016-02-07_Chelsea_vs_Manchester_United,england_epl,2016-02-07,19:00,Chelsea,Manchester United,1,1,1,1,4,4,6,8,7,10,4,6,0,3,0,0,1,0,21,26,3,3,2,2
+england_epl_2016-02-14_Manchester_City_vs_Tottenham,england_epl,2016-02-14,19:15,Manchester City,Tottenham,1,2,1,2,3,4,4,4,6,1,10,12,2,3,0,0,3,1,23,19,2,3,2,1
+england_epl_2016-03-02_Liverpool_vs_Manchester_City,england_epl,2016-03-02,23:00,Liverpool,Manchester City,3,0,3,0,4,1,4,3,1,2,7,9,0,1,0,0,0,1,20,26,3,3,1,4
+england_epl_2016-03-05_Chelsea_vs_Stoke_City,england_epl,2016-03-05,18:00,Chelsea,Stoke City,1,1,1,1,9,5,6,9,5,4,6,9,1,2,0,0,2,1,18,23,3,3,2,2
+england_epl_2016-03-19_Chelsea_vs_West_Ham,england_epl,2016-03-19,18:00,Chelsea,West Ham,2,2,2,2,6,4,14,6,9,10,9,9,2,4,0,0,0,3,14,9,3,3,3,2
+england_epl_2016-04-09_Swansea_vs_Chelsea,england_epl,2016-04-09,17:00,Swansea,Chelsea,1,0,1,0,5,5,4,5,1,9,8,10,4,4,0,0,1,1,13,17,3,3,1,2
+england_epl_2016-04-09_Manchester_City_vs_West_Brom,england_epl,2016-04-09,19:30,Manchester City,West Brom,2,1,2,1,6,1,3,6,8,6,6,4,0,1,0,0,1,3,17,17,3,2,2,3
+england_epl_2016-05-07_Sunderland_vs_Chelsea,england_epl,2016-05-07,17:00,Sunderland,Chelsea,3,2,3,2,3,4,6,1,2,2,6,8,4,2,0,1,6,1,16,16,3,3,2,4
+england_epl_2016-08-14_Arsenal_vs_Liverpool,england_epl,2016-08-14,18:00,Arsenal,Liverpool,3,4,3,4,5,10,3,3,5,3,13,16,3,3,0,0,4,2,18,21,3,3,5,4
+england_epl_2016-08-20_Burnley_vs_Liverpool,england_epl,2016-08-20,17:00,Burnley,Liverpool,2,0,2,0,2,9,1,15,1,12,15,5,0,1,0,0,3,0,11,22,3,3,1,3
+england_epl_2016-08-20_Leicester_vs_Arsenal,england_epl,2016-08-20,19:30,Leicester,Arsenal,0,0,0,0,4,7,4,6,2,7,12,7,1,2,0,0,0,2,30,29,3,3,1,1
+england_epl_2016-09-10_Arsenal_vs_Southampton,england_epl,2016-09-10,17:00,Arsenal,Southampton,2,1,2,1,6,5,11,5,6,1,10,9,2,5,0,0,0,2,23,13,3,3,2,3
+england_epl_2016-09-16_Chelsea_vs_Liverpool,england_epl,2016-09-16,22:00,Chelsea,Liverpool,1,2,1,2,5,7,5,5,6,3,6,12,1,1,0,0,4,2,20,23,3,3,3,2
+england_epl_2016-09-17_Hull_City_vs_Arsenal,england_epl,2016-09-17,17:00,Hull City,Arsenal,1,4,1,4,3,15,3,8,1,4,8,11,0,2,1,0,3,0,12,6,3,3,5,2
+england_epl_2016-09-24_Arsenal_vs_Chelsea,england_epl,2016-09-24,19:30,Arsenal,Chelsea,3,0,3,0,9,3,1,5,9,1,8,12,0,2,0,0,4,1,18,18,3,3,1,4
+england_epl_2016-10-17_Liverpool_vs_Manchester_United,england_epl,2016-10-17,22:00,Liverpool,Manchester United,0,0,0,0,3,2,6,5,3,1,13,19,0,4,0,0,2,6,25,27,3,2,1,1
+england_epl_2016-10-22_Liverpool_vs_West_Brom,england_epl,2016-10-22,19:30,Liverpool,West Brom,2,1,2,1,10,2,8,4,3,2,9,13,1,3,0,0,3,3,17,18,3,3,2,2
+england_epl_2016-10-29_Sunderland_vs_Arsenal,england_epl,2016-10-29,14:30,Sunderland,Arsenal,1,4,1,4,2,9,1,11,0,8,9,12,4,3,0,0,6,1,17,16,4,3,5,2
+england_epl_2016-10-29_Tottenham_vs_Leicester,england_epl,2016-10-29,17:00,Tottenham,Leicester,1,1,1,1,9,1,15,4,8,1,10,17,3,4,0,0,1,1,31,18,2,3,2,2
+england_epl_2016-11-06_Liverpool_vs_Watford,england_epl,2016-11-06,17:15,Liverpool,Watford,6,1,6,1,17,7,8,2,5,3,14,10,1,2,0,0,1,3,20,15,3,3,2,7
+england_epl_2016-11-06_Leicester_vs_West_Brom,england_epl,2016-11-06,19:30,Leicester,West Brom,1,2,1,2,2,4,3,7,5,6,9,8,0,2,0,0,2,1,28,17,3,2,3,2
+england_epl_2016-11-19_Southampton_vs_Liverpool,england_epl,2016-11-19,18:00,Southampton,Liverpool,0,0,0,0,0,4,2,8,1,8,8,9,1,1,0,0,2,3,23,34,3,2,1,1
+england_epl_2016-11-26_Liverpool_vs_Sunderland,england_epl,2016-11-26,18:00,Liverpool,Sunderland,2,0,2,0,8,4,11,2,9,4,4,7,1,3,0,0,0,2,15,14,3,2,1,3
+england_epl_2016-12-10_Leicester_vs_Manchester_City,england_epl,2016-12-10,20:30,Leicester,Manchester City,4,2,4,2,7,9,2,9,3,11,10,6,3,1,0,0,0,2,12,21,3,3,3,5
+england_epl_2016-12-11_Liverpool_vs_West_Ham,england_epl,2016-12-11,19:30,Liverpool,West Ham,2,2,2,2,8,3,9,4,8,3,6,8,2,0,0,0,5,2,22,23,1,2,3,3
+england_epl_2016-12-14_Middlesbrough_vs_Liverpool,england_epl,2016-12-14,22:45,Middlesbrough,Liverpool,0,3,0,3,6,6,2,11,5,2,11,13,1,0,0,0,2,3,17,19,3,4,3,1
+england_epl_2016-12-19_Everton_vs_Liverpool,england_epl,2016-12-19,23:00,Everton,Liverpool,0,1,0,1,2,4,4,8,1,6,14,10,3,1,0,0,0,0,20,33,3,3,2,1
+england_epl_2016-12-27_Liverpool_vs_Stoke_City,england_epl,2016-12-27,20:15,Liverpool,Stoke City,4,1,4,1,13,5,10,1,7,2,9,5,0,1,0,0,0,1,29,20,3,3,2,5
+england_epl_2016-12-31_Liverpool_vs_Manchester_City,england_epl,2016-12-31,20:30,Liverpool,Manchester City,1,0,1,0,2,3,3,6,2,6,11,10,2,1,0,0,2,2,33,25,2,2,1,2
+england_epl_2017-01-02_Middlesbrough_vs_Leicester,england_epl,2017-01-02,15:30,Middlesbrough,Leicester,0,0,0,0,1,1,8,5,2,2,9,9,3,0,0,0,0,0,20,29,3,3,1,1
+england_epl_2017-01-02_Sunderland_vs_Liverpool,england_epl,2017-01-02,18:00,Sunderland,Liverpool,2,2,2,2,8,12,2,5,1,3,9,9,2,3,0,0,3,2,13,22,2,3,3,3
+england_epl_2017-01-14_Leicester_vs_Chelsea,england_epl,2017-01-14,20:30,Leicester,Chelsea,0,3,0,3,3,5,3,3,3,5,10,8,1,0,0,0,0,1,28,29,3,3,4,1
+england_epl_2017-01-15_Manchester_United_vs_Liverpool,england_epl,2017-01-15,19:00,Manchester United,Liverpool,1,1,1,1,5,6,6,5,5,7,18,14,1,3,0,0,3,2,31,20,3,1,1,2
+england_epl_2017-01-31_Liverpool_vs_Chelsea,england_epl,2017-01-31,23:00,Liverpool,Chelsea,1,1,1,1,4,4,2,4,3,3,13,9,2,1,0,0,5,2,34,25,2,4,2,2
+england_epl_2017-02-27_Leicester_vs_Liverpool,england_epl,2017-02-27,23:00,Leicester,Liverpool,3,1,3,1,8,8,2,7,5,11,7,3,0,0,0,0,3,4,27,29,3,4,2,4
+england_epl_2017-04-26_Arsenal_vs_Leicester,england_epl,2017-04-26,21:45,Arsenal,Leicester,1,0,1,0,6,5,6,2,12,1,8,15,2,4,0,0,8,4,21,20,3,2,1,2
+england_epl_2017-05-13_Manchester_City_vs_Leicester,england_epl,2017-05-13,14:30,Manchester City,Leicester,2,1,2,1,7,5,8,5,9,3,12,15,3,3,0,0,0,0,24,21,3,3,2,3
+europe_uefa-champions-league_2014-11-04_Arsenal_vs_Anderlecht,europe_uefa-champions-league,2014-11-04,22:45,Arsenal,Anderlecht,3,3,3,4,10,6,6,2,8,7,9,13,1,3,0,0,0,0,19,13,3,3,4,4
+europe_uefa-champions-league_2014-11-04_Dortmund_vs_Galatasaray,europe_uefa-champions-league,2014-11-04,22:45,Dortmund,Galatasaray,4,1,4,1,5,4,3,2,9,5,7,7,0,3,0,0,0,2,23,26,3,2,2,5
+europe_uefa-champions-league_2014-11-05_Bayern_Munich_vs_AS_Roma,europe_uefa-champions-league,2014-11-05,22:45,Bayern Munich,AS Roma,2,0,2,0,6,2,10,0,6,3,8,9,0,0,0,0,1,1,22,15,3,3,1,3
+europe_uefa-champions-league_2014-12-09_Benfica_vs_Bayer_Leverkusen,europe_uefa-champions-league,2014-12-09,22:45,Benfica,Bayer Leverkusen,0,0,0,0,3,4,6,5,6,3,8,15,1,3,0,1,1,3,24,16,3,3,1,1
+europe_uefa-champions-league_2014-12-09_Dortmund_vs_Anderlecht,europe_uefa-champions-league,2014-12-09,22:45,Dortmund,Anderlecht,1,1,1,1,11,2,6,4,4,3,10,7,0,1,0,0,3,0,21,14,3,3,2,2
+europe_uefa-champions-league_2014-12-09_Liverpool_vs_Basel,europe_uefa-champions-league,2014-12-09,22:45,Liverpool,Basel,1,1,1,1,3,4,5,10,4,4,13,15,3,1,1,0,2,2,21,14,3,3,2,2
+europe_uefa-champions-league_2014-12-10_Barcelona_vs_Paris_SG,europe_uefa-champions-league,2014-12-10,22:45,Barcelona,Paris SG,3,1,3,1,6,1,4,6,3,3,11,12,0,1,0,0,1,1,13,15,3,2,2,4
+europe_uefa-champions-league_2014-12-10_Bayern_Munich_vs_CSKA_Moscow,europe_uefa-champions-league,2014-12-10,22:45,Bayern Munich,CSKA Moscow,3,0,3,0,7,0,5,4,7,5,4,7,1,3,0,0,7,1,19,14,3,3,1,4
+europe_uefa-champions-league_2015-02-17_Paris_SG_vs_Chelsea,europe_uefa-champions-league,2015-02-17,22:45,Paris SG,Chelsea,1,1,2,1,3,2,3,0,6,1,20,17,2,2,0,0,1,0,17,12,1,3,2,2
+europe_uefa-champions-league_2015-02-17_Shakhtar_Donetsk_vs_Bayern_Munich,europe_uefa-champions-league,2015-02-17,22:45,Shakhtar Donetsk,Bayern Munich,0,0,0,0,1,0,0,4,0,4,13,16,3,4,0,1,1,1,15,17,3,2,1,1
+europe_uefa-champions-league_2015-02-18_Schalke_vs_Real_Madrid,europe_uefa-champions-league,2015-02-18,22:45,Schalke,Real Madrid,0,2,0,3,2,4,2,3,2,2,14,7,3,1,0,0,1,3,17,24,3,3,3,1
+europe_uefa-champions-league_2015-02-25_Arsenal_vs_Monaco,europe_uefa-champions-league,2015-02-25,22:45,Arsenal,Monaco,1,3,2,5,2,8,11,4,7,2,10,10,3,2,0,0,0,4,24,14,3,3,3,2
+europe_uefa-champions-league_2015-02-25_Bayer_Leverkusen_vs_Atl._Madrid,europe_uefa-champions-league,2015-02-25,22:45,Bayer Leverkusen,Atl. Madrid,1,0,2,0,4,0,2,4,3,3,21,9,5,4,0,1,0,0,17,27,3,3,0,3
+europe_uefa-champions-league_2015-03-10_FC_Porto_vs_Basel,europe_uefa-champions-league,2015-03-10,22:45,FC Porto,Basel,4,0,8,0,6,5,3,3,2,1,5,16,1,4,0,1,3,0,21,22,3,4,1,5
+europe_uefa-champions-league_2015-03-18_Barcelona_vs_Manchester_City,europe_uefa-champions-league,2015-03-18,22:45,Barcelona,Manchester City,1,0,2,0,9,6,9,6,6,5,7,11,1,5,0,0,1,0,26,17,3,4,1,2
+europe_uefa-champions-league_2015-03-18_Dortmund_vs_Juventus,europe_uefa-champions-league,2015-03-18,22:45,Dortmund,Juventus,0,3,0,5,2,5,3,1,5,4,7,10,1,0,0,0,2,2,22,25,3,3,4,1
+europe_uefa-champions-league_2015-04-14_Atl._Madrid_vs_Real_Madrid,europe_uefa-champions-league,2015-04-14,21:45,Atl. Madrid,Real Madrid,0,0,0,0,1,9,5,4,7,5,18,8,3,2,0,0,0,0,17,20,2,2,1,1
+europe_uefa-champions-league_2015-04-14_Juventus_vs_Monaco,europe_uefa-champions-league,2015-04-14,21:45,Juventus,Monaco,1,0,1,0,6,4,8,7,6,7,6,11,0,1,0,0,0,0,22,15,3,3,1,2
+europe_uefa-champions-league_2015-04-21_Bayern_Munich_vs_FC_Porto,europe_uefa-champions-league,2015-04-21,21:45,Bayern Munich,FC Porto,6,1,7,1,9,2,5,1,4,1,17,17,1,4,0,1,0,1,18,13,3,3,7,2
+europe_uefa-champions-league_2015-04-22_Monaco_vs_Juventus,europe_uefa-champions-league,2015-04-22,21:45,Monaco,Juventus,0,0,0,0,1,1,7,3,6,2,13,18,2,2,0,0,1,1,42,36,3,3,1,1
+europe_uefa-champions-league_2015-05-06_Barcelona_vs_Bayern_Munich,europe_uefa-champions-league,2015-05-06,21:45,Barcelona,Bayern Munich,3,0,4,0,8,1,8,6,2,3,14,14,3,3,0,0,1,1,23,20,3,1,1,3
+europe_uefa-champions-league_2015-05-12_Bayern_Munich_vs_Barcelona,europe_uefa-champions-league,2015-05-12,21:45,Bayern Munich,Barcelona,3,2,3,2,8,5,10,0,4,1,20,9,5,2,0,0,3,3,28,18,3,3,3,4
+europe_uefa-champions-league_2015-09-15_Galatasaray_vs_Atl._Madrid,europe_uefa-champions-league,2015-09-15,21:45,Galatasaray,Atl. Madrid,0,2,0,2,7,8,12,3,8,4,16,16,2,1,0,0,0,0,15,17,2,3,3,1
+europe_uefa-champions-league_2015-09-15_Manchester_City_vs_Juventus,europe_uefa-champions-league,2015-09-15,21:45,Manchester City,Juventus,1,2,1,2,8,5,7,5,6,1,18,9,0,0,0,0,0,3,23,24,3,2,3,2
+europe_uefa-champions-league_2015-09-15_Paris_SG_vs_Malmo_FF,europe_uefa-champions-league,2015-09-15,21:45,Paris SG,Malmo FF,2,0,2,0,10,1,8,2,11,2,9,15,2,2,0,0,7,1,11,12,2,2,1,3
+europe_uefa-champions-league_2015-09-15_Real_Madrid_vs_Shakhtar_Donetsk,europe_uefa-champions-league,2015-09-15,21:45,Real Madrid,Shakhtar Donetsk,4,0,4,0,12,0,12,4,6,1,14,9,0,5,0,1,0,2,16,7,3,3,1,5
+europe_uefa-champions-league_2015-09-15_Sevilla_vs_B._Monchengladbach,europe_uefa-champions-league,2015-09-15,21:45,Sevilla,B. Monchengladbach,3,0,3,0,11,3,7,5,5,1,16,14,2,3,0,0,2,0,26,12,3,3,1,4
+europe_uefa-champions-league_2015-09-16_AS_Roma_vs_Barcelona,europe_uefa-champions-league,2015-09-16,21:45,AS Roma,Barcelona,1,1,1,1,3,5,3,6,1,4,10,4,1,1,0,0,3,3,19,17,3,2,2,2
+europe_uefa-champions-league_2015-09-16_Bayer_Leverkusen_vs_BATE,europe_uefa-champions-league,2015-09-16,21:45,Bayer Leverkusen,BATE,4,1,4,1,6,2,5,0,2,3,10,13,1,3,0,0,2,0,31,17,3,3,3,4
+europe_uefa-champions-league_2015-09-16_Gent_vs_Lyon,europe_uefa-champions-league,2015-09-16,21:45,Gent,Lyon,1,1,1,1,6,5,4,8,4,7,11,19,1,3,2,0,2,2,20,30,3,3,2,2
+europe_uefa-champions-league_2015-09-29_Arsenal_vs_Olympiakos_Piraeus,europe_uefa-champions-league,2015-09-29,21:45,Arsenal,Olympiakos Piraeus,2,3,2,3,10,4,5,2,8,4,8,9,3,4,0,0,3,1,14,20,3,3,4,3
+europe_uefa-champions-league_2015-09-29_Lyon_vs_Valencia,europe_uefa-champions-league,2015-09-29,21:45,Lyon,Valencia,0,1,0,1,7,2,10,4,8,5,14,11,3,3,0,0,0,5,25,17,3,3,2,1
+europe_uefa-champions-league_2015-10-20_Arsenal_vs_Bayern_Munich,europe_uefa-champions-league,2015-10-20,21:45,Arsenal,Bayern Munich,2,0,2,0,11,8,3,7,5,11,10,7,1,0,0,0,4,0,10,21,3,2,1,3
+europe_uefa-champions-league_2015-11-03_FC_Astana_vs_Atl._Madrid,europe_uefa-champions-league,2015-11-03,18:00,FC Astana,Atl. Madrid,0,0,0,0,3,5,4,5,4,7,12,8,3,0,0,0,1,2,26,25,3,3,1,1
+europe_uefa-champions-league_2015-11-03_B._Monchengladbach_vs_Juventus,europe_uefa-champions-league,2015-11-03,22:45,B. Monchengladbach,Juventus,1,1,1,1,11,4,11,13,7,8,10,10,0,3,0,1,0,0,19,19,1,3,2,2
+europe_uefa-champions-league_2015-11-03_Manchester_United_vs_CSKA_Moscow,europe_uefa-champions-league,2015-11-03,22:45,Manchester United,CSKA Moscow,1,0,1,0,6,2,6,1,10,1,12,10,0,2,0,0,11,1,24,21,3,3,1,2
+europe_uefa-champions-league_2015-11-03_PSV_vs_Wolfsburg,europe_uefa-champions-league,2015-11-03,22:45,PSV,Wolfsburg,2,0,2,0,3,2,6,3,1,2,19,9,3,3,0,0,2,3,17,13,3,3,1,3
+europe_uefa-champions-league_2015-11-04_Bayern_Munich_vs_Arsenal,europe_uefa-champions-league,2015-11-04,22:45,Bayern Munich,Arsenal,5,1,5,1,14,3,6,2,9,1,8,8,0,2,0,0,1,3,9,14,3,3,2,5
+europe_uefa-champions-league_2015-11-04_Gent_vs_Valencia,europe_uefa-champions-league,2015-11-04,22:45,Gent,Valencia,1,0,1,0,7,4,5,3,4,7,15,15,1,4,0,0,3,1,25,23,3,3,1,2
+europe_uefa-champions-league_2015-11-04_Lyon_vs_Zenit_Petersburg,europe_uefa-champions-league,2015-11-04,22:45,Lyon,Zenit Petersburg,0,2,0,2,9,5,7,2,5,0,19,15,1,6,1,1,5,3,14,24,3,3,3,1
+europe_uefa-champions-league_2015-11-04_Maccabi_Tel_Aviv_vs_FC_Porto,europe_uefa-champions-league,2015-11-04,22:45,Maccabi Tel Aviv,FC Porto,1,3,1,3,5,11,4,4,4,10,12,9,2,1,0,0,1,3,9,19,4,2,4,2
+europe_uefa-champions-league_2015-11-24_Zenit_Petersburg_vs_Valencia,europe_uefa-champions-league,2015-11-24,20:00,Zenit Petersburg,Valencia,2,0,2,0,10,3,4,1,6,6,19,14,3,1,0,1,5,4,12,11,3,3,1,3
+europe_uefa-champions-league_2015-11-24_Barcelona_vs_AS_Roma,europe_uefa-champions-league,2015-11-24,22:45,Barcelona,AS Roma,6,1,5,1,11,4,5,2,11,3,12,10,3,1,0,0,10,0,18,9,3,3,2,7
+europe_uefa-champions-league_2015-11-24_Bayern_Munich_vs_Olympiakos_Piraeus,europe_uefa-champions-league,2015-11-24,22:45,Bayern Munich,Olympiakos Piraeus,4,0,4,0,6,0,7,7,4,2,6,10,1,1,1,0,5,0,21,17,3,3,1,5
+europe_uefa-champions-league_2015-11-24_FC_Porto_vs_Dyn._Kiev,europe_uefa-champions-league,2015-11-24,22:45,FC Porto,Dyn. Kiev,0,2,0,2,3,5,5,5,3,5,12,20,1,3,0,0,1,2,20,20,3,3,3,1
+europe_uefa-champions-league_2015-11-24_Maccabi_Tel_Aviv_vs_Chelsea,europe_uefa-champions-league,2015-11-24,22:45,Maccabi Tel Aviv,Chelsea,0,4,0,4,1,6,3,9,4,6,12,8,0,2,1,0,4,5,11,23,3,3,4,1
+europe_uefa-champions-league_2015-11-25_CSKA_Moscow_vs_Wolfsburg,europe_uefa-champions-league,2015-11-25,20:00,CSKA Moscow,Wolfsburg,0,2,0,2,3,5,6,2,5,5,8,7,4,0,0,0,1,4,20,30,3,2,3,1
+europe_uefa-champions-league_2015-11-25_Atl._Madrid_vs_Galatasaray,europe_uefa-champions-league,2015-11-25,22:45,Atl. Madrid,Galatasaray,2,0,2,0,9,1,4,2,8,3,4,11,0,1,0,0,1,0,26,24,3,3,1,3
+europe_uefa-champions-league_2015-11-25_B._Monchengladbach_vs_Sevilla,europe_uefa-champions-league,2015-11-25,22:45,B. Monchengladbach,Sevilla,4,2,4,2,14,10,10,6,6,8,8,3,2,1,0,0,0,1,11,28,3,3,3,5
+europe_uefa-champions-league_2015-11-25_Malmo_FF_vs_Paris_SG,europe_uefa-champions-league,2015-11-25,22:45,Malmo FF,Paris SG,0,5,0,5,3,5,3,7,7,4,10,5,2,0,0,0,3,2,16,19,3,3,6,1
+europe_uefa-champions-league_2015-12-09_D._Zagreb_vs_Bayern_Munich,europe_uefa-champions-league,2015-12-09,22:45,D. Zagreb,Bayern Munich,0,2,0,2,3,10,5,8,5,10,10,9,3,0,0,0,3,4,5,16,3,3,3,1
+europe_uefa-champions-league_2016-09-13_Barcelona_vs_Celtic,europe_uefa-champions-league,2016-09-13,21:45,Barcelona,Celtic,7,0,7,0,13,3,5,1,9,2,8,3,2,1,0,0,5,2,16,8,2,3,1,8
+europe_uefa-champions-league_2016-09-13_Dyn._Kiev_vs_Napoli,europe_uefa-champions-league,2016-09-13,21:45,Dyn. Kiev,Napoli,1,2,1,2,3,7,8,4,8,6,13,16,3,1,1,0,2,5,24,13,3,3,2,2
+europe_uefa-champions-league_2016-09-28_Ludogorets_vs_Paris_SG,europe_uefa-champions-league,2016-09-28,21:45,Ludogorets,Paris SG,1,3,1,3,4,9,3,7,0,4,9,13,3,2,0,0,0,2,16,13,2,3,4,2
+europe_uefa-champions-league_2016-10-19_Barcelona_vs_Manchester_City,europe_uefa-champions-league,2016-10-19,21:45,Barcelona,Manchester City,4,0,4,0,7,5,3,3,2,4,14,16,2,3,1,1,2,2,18,22,3,3,1,5
+europe_uefa-champions-league_2016-11-23_Celtic_vs_Barcelona,europe_uefa-champions-league,2016-11-23,22:45,Celtic,Barcelona,0,2,0,2,5,4,1,3,1,5,12,12,3,4,0,0,5,1,17,24,3,3,3,1
+europe_uefa-champions-league_2016-11-23_Napoli_vs_Dyn._Kiev,europe_uefa-champions-league,2016-11-23,22:45,Napoli,Dyn. Kiev,0,0,0,0,9,1,5,5,17,2,17,14,1,1,0,0,5,1,22,19,3,3,1,1
+europe_uefa-champions-league_2016-12-06_Benfica_vs_Napoli,europe_uefa-champions-league,2016-12-06,22:45,Benfica,Napoli,1,2,1,2,3,9,7,5,7,2,15,9,1,1,0,0,0,7,26,30,3,3,3,2
+europe_uefa-champions-league_2017-02-14_Paris_SG_vs_Barcelona,europe_uefa-champions-league,2017-02-14,22:45,Paris SG,Barcelona,4,0,4,0,10,1,3,3,2,3,12,10,1,3,0,0,1,3,13,19,3,2,1,5
+europe_uefa-champions-league_2017-02-15_Real_Madrid_vs_Napoli,europe_uefa-champions-league,2017-02-15,22:45,Real Madrid,Napoli,3,1,3,1,9,2,11,5,5,1,9,11,2,2,0,0,7,1,20,18,3,2,2,4
+europe_uefa-champions-league_2017-03-07_Napoli_vs_Real_Madrid,europe_uefa-champions-league,2017-03-07,22:45,Napoli,Real Madrid,1,3,1,3,4,8,8,5,9,4,16,8,2,0,0,0,3,3,29,17,3,3,3,2
+europe_uefa-champions-league_2017-04-18_Real_Madrid_vs_Bayern_Munich,europe_uefa-champions-league,2017-04-18,21:45,Real Madrid,Bayern Munich,4,2,1,2,9,5,6,10,5,7,6,14,1,4,0,1,1,2,18,15,2,3,3,2
+france_ligue-1_2015-04-05_Marseille_vs_Paris_SG,france_ligue-1,2015-04-05,22:00,Marseille,Paris SG,2,3,2,3,5,6,11,7,2,2,12,8,3,2,1,0,0,2,15,12,3,3,4,3
+france_ligue-1_2015-09-26_Nantes_vs_Paris_SG,france_ligue-1,2015-09-26,18:30,Nantes,Paris SG,1,4,1,7,4,8,3,8,3,7,18,9,2,1,0,0,1,2,19,19,2,3,5,2
+france_ligue-1_2015-11-07_Paris_SG_vs_Toulouse,france_ligue-1,2015-11-07,19:00,Paris SG,Toulouse,5,0,6,0,9,0,5,7,5,0,12,13,2,1,0,0,0,1,16,21,3,3,1,6
+france_ligue-1_2016-08-12_Bastia_vs_Paris_SG,france_ligue-1,2016-08-12,21:00,Bastia,Paris SG,0,1,0,1,2,4,9,3,2,6,13,15,3,2,0,0,0,3,15,21,2,3,2,1
+france_ligue-1_2016-09-16_Caen_vs_Paris_SG,france_ligue-1,2016-09-16,21:45,Caen,Paris SG,0,6,0,6,1,9,9,10,3,4,9,10,1,1,0,0,0,0,24,13,1,2,7,1
+france_ligue-1_2016-09-23_Toulouse_vs_Paris_SG,france_ligue-1,2016-09-23,21:45,Toulouse,Paris SG,2,0,2,0,5,4,6,7,3,6,11,10,3,2,0,1,2,2,12,24,3,3,1,3
+france_ligue-1_2016-10-01_Paris_SG_vs_Bordeaux,france_ligue-1,2016-10-01,18:00,Paris SG,Bordeaux,2,0,3,0,8,3,5,4,11,2,7,10,1,1,0,0,3,3,21,12,3,3,1,3
+france_ligue-1_2016-10-15_Nancy_vs_Paris_SG,france_ligue-1,2016-10-15,18:00,Nancy,Paris SG,1,2,1,2,3,3,2,2,4,1,16,13,1,1,0,0,2,4,16,21,3,3,2,2
+france_ligue-1_2016-10-28_Lille_vs_Paris_SG,france_ligue-1,2016-10-28,21:45,Lille,Paris SG,0,1,0,1,2,6,4,5,2,3,20,17,2,1,0,0,2,3,7,14,3,4,3,0
+france_ligue-1_2016-11-06_Paris_SG_vs_Rennes,france_ligue-1,2016-11-06,22:45,Paris SG,Rennes,4,0,4,0,6,2,8,1,9,2,6,9,1,2,0,0,6,0,17,15,3,4,1,5
+france_ligue-1_2016-11-19_Paris_SG_vs_Nantes,france_ligue-1,2016-11-19,19:00,Paris SG,Nantes,2,0,2,0,4,3,4,6,4,4,7,10,0,1,0,0,2,3,21,24,3,3,1,2
+france_ligue-1_2016-11-27_Lyon_vs_Paris_SG,france_ligue-1,2016-11-27,22:45,Lyon,Paris SG,1,2,1,3,4,4,6,3,6,8,7,16,1,6,0,0,0,2,10,14,1,3,3,1
+france_ligue-1_2016-12-11_Paris_SG_vs_Nice,france_ligue-1,2016-12-11,22:45,Paris SG,Nice,2,2,2,2,10,3,5,2,9,0,15,10,2,3,0,0,3,1,28,15,2,3,2,3
+france_ligue-1_2016-12-17_Guingamp_vs_Paris_SG,france_ligue-1,2016-12-17,19:00,Guingamp,Paris SG,2,1,2,1,3,5,8,5,4,6,16,15,0,0,0,0,1,4,11,23,1,2,2,3
+france_ligue-1_2016-12-21_Paris_SG_vs_Lorient,france_ligue-1,2016-12-21,22:50,Paris SG,Lorient,5,0,5,0,7,0,9,3,13,2,6,10,0,1,0,0,4,0,22,10,3,3,1,5
+france_ligue-1_2017-01-21_Nantes_vs_Paris_SG,france_ligue-1,2017-01-21,19:00,Nantes,Paris SG,0,2,0,2,0,4,8,3,6,5,14,10,2,1,0,0,0,1,22,27,2,3,2,1
+france_ligue-1_2017-02-10_Bordeaux_vs_Paris_SG,france_ligue-1,2017-02-10,22:45,Bordeaux,Paris SG,0,3,0,3,4,5,6,3,3,2,7,8,0,1,0,0,1,2,17,15,3,3,4,1
+france_ligue-1_2017-02-19_Paris_SG_vs_Toulouse,france_ligue-1,2017-02-19,23:00,Paris SG,Toulouse,0,0,0,0,6,1,5,1,7,2,10,12,1,3,0,0,2,1,22,12,2,3,1,1
+france_ligue-1_2017-02-26_Marseille_vs_Paris_SG,france_ligue-1,2017-02-26,23:00,Marseille,Paris SG,1,5,1,5,2,13,4,6,5,7,13,8,2,1,0,0,1,3,7,18,2,3,6,2
+france_ligue-1_2017-03-12_Lorient_vs_Paris_SG,france_ligue-1,2017-03-12,23:00,Lorient,Paris SG,1,2,1,2,2,8,3,5,3,9,8,6,2,1,0,0,3,2,21,19,2,2,3,2
+france_ligue-1_2017-03-19_Paris_SG_vs_Lyon,france_ligue-1,2017-03-19,23:00,Paris SG,Lyon,2,1,2,1,5,4,4,2,7,9,11,8,2,1,0,0,0,1,12,17,3,3,2,3
+france_ligue-1_2017-04-14_Angers_vs_Paris_SG,france_ligue-1,2017-04-14,21:45,Angers,Paris SG,0,2,0,2,4,2,6,6,5,1,12,12,3,1,0,0,1,3,23,11,2,3,3,1
+france_ligue-1_2017-04-18_Metz_vs_Paris_SG,france_ligue-1,2017-04-18,19:30,Metz,Paris SG,2,3,2,3,2,7,4,5,1,8,10,11,1,1,0,0,2,0,18,16,3,2,4,2
+france_ligue-1_2017-04-22_Paris_SG_vs_Montpellier,france_ligue-1,2017-04-22,18:00,Paris SG,Montpellier,2,0,2,0,8,4,5,7,6,6,9,6,1,0,0,0,2,1,27,13,3,3,1,3
+france_ligue-1_2017-04-30_Nice_vs_Paris_SG,france_ligue-1,2017-04-30,22:00,Nice,Paris SG,3,1,3,1,4,7,3,8,2,8,10,15,2,3,0,2,3,4,13,25,3,3,2,4
+france_ligue-1_2017-05-06_Paris_SG_vs_Bastia,france_ligue-1,2017-05-06,18:00,Paris SG,Bastia,5,0,5,0,9,0,8,2,11,4,9,3,1,2,0,0,6,1,22,14,3,3,1,6
+france_ligue-1_2017-05-20_Paris_SG_vs_Caen,france_ligue-1,2017-05-20,22:00,Paris SG,Caen,1,1,1,1,6,6,4,5,6,5,8,7,0,1,0,0,1,1,17,8,3,3,1,2
+germany_bundesliga_2015-02-21_Paderborn_vs_Bayern_Munich,germany_bundesliga,2015-02-21,17:30,Paderborn,Bayern Munich,0,6,0,6,4,8,7,6,4,4,11,13,0,0,1,0,3,2,11,22,3,3,7,1
+germany_bundesliga_2015-04-11_Bayern_Munich_vs_Eintracht_Frankfurt,germany_bundesliga,2015-04-11,16:30,Bayern Munich,Eintracht Frankfurt,3,0,3,0,13,2,4,2,3,0,13,17,1,3,0,0,3,1,19,15,3,3,1,4
+germany_bundesliga_2015-04-25_Dortmund_vs_Eintracht_Frankfurt,germany_bundesliga,2015-04-25,16:30,Dortmund,Eintracht Frankfurt,2,0,2,0,6,1,7,3,2,2,21,13,3,3,0,0,4,2,18,36,3,3,1,3
+germany_bundesliga_2015-05-09_Dortmund_vs_Hertha_Berlin,germany_bundesliga,2015-05-09,16:30,Dortmund,Hertha Berlin,2,0,3,0,7,2,7,2,7,3,14,10,3,5,0,0,2,3,18,22,3,3,1,3
+germany_bundesliga_2015-05-16_Wolfsburg_vs_Dortmund,germany_bundesliga,2015-05-16,16:30,Wolfsburg,Dortmund,2,1,3,1,7,2,6,10,5,5,11,10,4,3,0,0,5,3,29,19,3,3,2,3
+germany_bundesliga_2015-08-22_Hoffenheim_vs_Bayern_Munich,germany_bundesliga,2015-08-22,16:30,Hoffenheim,Bayern Munich,1,2,1,2,3,11,2,6,4,4,17,14,3,3,0,1,1,5,15,18,3,3,4,2
+germany_bundesliga_2015-08-30_Dortmund_vs_Hertha_Berlin,germany_bundesliga,2015-08-30,16:30,Dortmund,Hertha Berlin,3,1,3,1,8,2,4,0,5,1,14,12,0,2,0,0,4,0,22,27,3,3,2,3
+germany_bundesliga_2015-09-19_Darmstadt_vs_Bayern_Munich,germany_bundesliga,2015-09-19,16:30,Darmstadt,Bayern Munich,0,3,0,3,2,7,3,9,1,5,11,8,2,1,0,0,6,2,14,21,3,3,4,1
+germany_bundesliga_2015-09-22_Bayern_Munich_vs_Wolfsburg,germany_bundesliga,2015-09-22,21:00,Bayern Munich,Wolfsburg,5,1,5,1,12,3,4,2,5,1,9,13,1,2,0,0,3,1,15,15,3,3,2,6
+germany_bundesliga_2015-09-26_1._FSV_Mainz_05_vs_Bayern_Munich,germany_bundesliga,2015-09-26,16:30,1. FSV Mainz 05,Bayern Munich,0,3,0,3,1,8,4,9,3,4,16,12,1,1,0,0,2,3,19,21,3,3,4,1
+germany_bundesliga_2015-12-12_Bayern_Munich_vs_Ingolstadt,germany_bundesliga,2015-12-12,17:30,Bayern Munich,Ingolstadt,2,0,2,0,9,3,3,1,4,4,15,20,2,1,0,0,4,7,22,17,3,3,1,3
+germany_bundesliga_2016-01-31_Bayern_Munich_vs_Hoffenheim,germany_bundesliga,2016-01-31,19:30,Bayern Munich,Hoffenheim,2,0,2,0,13,2,11,2,10,2,11,11,1,1,0,0,3,1,25,15,3,3,1,3
+germany_bundesliga_2016-04-02_Bayern_Munich_vs_Eintracht_Frankfurt,germany_bundesliga,2016-04-02,16:30,Bayern Munich,Eintracht Frankfurt,1,0,1,0,8,0,5,1,5,1,15,15,2,5,0,0,4,0,20,19,2,3,1,2
+germany_bundesliga_2016-04-09_VfB_Stuttgart_vs_Bayern_Munich,germany_bundesliga,2016-04-09,16:30,VfB Stuttgart,Bayern Munich,1,3,1,3,2,5,1,4,7,4,10,13,1,3,0,0,3,4,15,20,1,3,4,2
+germany_bundesliga_2016-04-16_Bayern_Munich_vs_Schalke,germany_bundesliga,2016-04-16,19:30,Bayern Munich,Schalke,3,0,3,0,7,3,5,2,6,2,10,7,0,0,0,0,3,6,19,12,3,3,1,4
+germany_bundesliga_2016-09-17_Dortmund_vs_Darmstadt,germany_bundesliga,2016-09-17,16:30,Dortmund,Darmstadt,6,0,6,0,18,2,5,4,12,2,8,16,0,5,0,1,2,1,22,14,3,3,1,7
+germany_bundesliga_2016-09-20_Wolfsburg_vs_Dortmund,germany_bundesliga,2016-09-20,21:00,Wolfsburg,Dortmund,1,5,1,5,10,9,5,1,2,3,14,12,2,0,0,0,4,2,15,20,4,3,6,2
+germany_bundesliga_2016-09-23_Dortmund_vs_SC_Freiburg,germany_bundesliga,2016-09-23,21:30,Dortmund,SC Freiburg,3,1,3,1,7,5,15,3,14,3,8,27,2,3,0,0,1,1,30,17,3,3,2,3
+germany_bundesliga_2016-10-14_Dortmund_vs_Hertha_Berlin,germany_bundesliga,2016-10-14,21:30,Dortmund,Hertha Berlin,1,1,1,1,8,2,4,6,5,0,13,21,1,5,1,1,3,1,25,18,3,3,2,2
+germany_bundesliga_2016-10-22_Ingolstadt_vs_Dortmund,germany_bundesliga,2016-10-22,16:30,Ingolstadt,Dortmund,3,3,3,3,7,13,4,13,2,8,20,12,0,1,0,0,2,0,13,23,2,3,3,4
+germany_bundesliga_2016-10-29_Dortmund_vs_Schalke,germany_bundesliga,2016-10-29,19:30,Dortmund,Schalke,0,0,0,0,3,3,5,3,1,3,14,21,4,4,0,0,3,3,20,18,3,3,1,1
+germany_bundesliga_2016-11-26_Eintracht_Frankfurt_vs_Dortmund,germany_bundesliga,2016-11-26,17:30,Eintracht Frankfurt,Dortmund,2,1,2,1,4,6,7,6,4,5,19,11,4,3,0,0,3,5,19,28,3,3,2,3
+germany_bundesliga_2016-12-10_FC_Koln_vs_Dortmund,germany_bundesliga,2016-12-10,17:30,FC Koln,Dortmund,1,1,1,1,3,4,4,8,1,6,26,16,3,3,1,0,5,1,16,28,2,3,2,2
+germany_bundesliga_2016-12-20_Dortmund_vs_FC_Augsburg,germany_bundesliga,2016-12-20,22:00,Dortmund,FC Augsburg,1,1,1,1,9,3,9,5,6,1,12,17,1,2,0,0,1,3,21,18,3,3,2,2
+germany_bundesliga_2017-02-04_Dortmund_vs_RB_Leipzig,germany_bundesliga,2017-02-04,20:30,Dortmund,RB Leipzig,1,0,1,0,4,1,7,2,5,2,14,19,1,3,0,0,5,2,28,34,3,3,0,2
+germany_bundesliga_2017-02-11_Darmstadt_vs_Dortmund,germany_bundesliga,2017-02-11,17:30,Darmstadt,Dortmund,2,1,2,1,9,4,7,7,1,11,8,21,2,2,0,0,2,1,12,22,3,2,2,3
+germany_bundesliga_2017-02-18_Dortmund_vs_Wolfsburg,germany_bundesliga,2017-02-18,17:30,Dortmund,Wolfsburg,3,0,3,0,13,4,5,3,8,3,17,14,2,1,0,0,5,2,12,15,3,3,1,4
+germany_bundesliga_2017-03-17_Dortmund_vs_Ingolstadt,germany_bundesliga,2017-03-17,22:30,Dortmund,Ingolstadt,1,0,1,0,6,7,4,6,4,2,11,23,1,3,0,0,0,4,19,39,3,3,1,2
+germany_bundesliga_2017-04-01_Schalke_vs_Dortmund,germany_bundesliga,2017-04-01,16:30,Schalke,Dortmund,1,1,1,1,7,7,3,5,9,4,13,17,1,2,0,0,6,2,27,23,3,3,2,2
+germany_bundesliga_2017-04-15_Dortmund_vs_Eintracht_Frankfurt,germany_bundesliga,2017-04-15,16:30,Dortmund,Eintracht Frankfurt,3,1,3,1,9,3,3,5,2,1,12,24,0,0,0,0,5,5,25,26,3,3,2,4
+germany_bundesliga_2017-05-13_FC_Augsburg_vs_Dortmund,germany_bundesliga,2017-05-13,16:30,FC Augsburg,Dortmund,1,1,1,1,3,7,1,5,2,3,16,8,3,1,0,0,2,0,15,23,4,3,2,2
+italy_serie-a_2015-02-15_AC_Milan_vs_Empoli,italy_serie-a,2015-02-15,14:30,AC Milan,Empoli,1,1,1,1,4,8,5,11,2,3,17,19,4,2,1,0,3,1,27,16,3,3,2,2
+italy_serie-a_2015-04-11_Verona_vs_Inter,italy_serie-a,2015-04-11,21:45,Verona,Inter,0,3,0,3,7,2,6,8,4,5,12,7,2,4,0,0,0,0,13,17,3,3,4,1
+italy_serie-a_2015-04-19_Inter_vs_AC_Milan,italy_serie-a,2015-04-19,21:45,Inter,AC Milan,0,0,0,0,3,4,10,3,9,2,10,17,4,2,0,0,1,1,19,13,2,3,1,1
+italy_serie-a_2015-04-25_Inter_vs_AS_Roma,italy_serie-a,2015-04-25,21:45,Inter,AS Roma,2,1,2,1,5,6,6,4,2,4,17,16,5,4,0,0,4,3,17,25,3,3,2,3
+italy_serie-a_2015-04-26_Torino_vs_Juventus,italy_serie-a,2015-04-26,16:00,Torino,Juventus,2,1,2,1,6,3,6,7,3,2,15,15,3,1,0,0,1,1,12,17,3,3,2,2
+italy_serie-a_2015-05-03_Napoli_vs_AC_Milan,italy_serie-a,2015-05-03,21:45,Napoli,AC Milan,3,0,3,0,11,2,16,0,12,1,14,9,2,0,0,1,0,0,19,16,3,3,1,4
+italy_serie-a_2015-05-16_Inter_vs_Juventus,italy_serie-a,2015-05-16,19:00,Inter,Juventus,1,2,1,2,8,3,10,7,8,3,20,7,5,3,0,0,2,3,15,12,3,3,3,2
+italy_serie-a_2015-09-20_Chievo_vs_Inter,italy_serie-a,2015-09-20,13:30,Chievo,Inter,0,1,0,1,3,6,11,6,8,8,16,13,3,1,0,0,3,0,19,23,3,3,2,1
+italy_serie-a_2015-09-22_Udinese_vs_AC_Milan,italy_serie-a,2015-09-22,21:45,Udinese,AC Milan,2,3,2,3,4,5,7,4,7,1,23,21,5,3,1,0,0,0,23,18,3,3,4,3
+italy_serie-a_2015-11-01_Lazio_vs_AC_Milan,italy_serie-a,2015-11-01,22:45,Lazio,AC Milan,1,3,1,3,5,5,4,5,7,3,21,11,2,2,0,0,2,2,33,22,2,3,4,2
+italy_serie-a_2015-11-07_AC_Milan_vs_Atalanta,italy_serie-a,2015-11-07,22:45,AC Milan,Atalanta,0,0,0,0,4,3,4,15,4,5,15,18,4,4,0,0,4,2,31,19,3,3,1,1
+italy_serie-a_2015-11-22_Inter_vs_Frosinone,italy_serie-a,2015-11-22,22:45,Inter,Frosinone,4,0,4,0,13,5,9,6,6,7,15,18,1,3,0,0,0,2,31,20,3,3,1,4
+italy_serie-a_2016-08-21_Pescara_vs_Napoli,italy_serie-a,2016-08-21,21:45,Pescara,Napoli,2,2,2,2,4,5,2,8,3,9,9,10,3,2,0,0,1,0,11,17,3,3,3,3
+italy_serie-a_2016-08-28_Cagliari_vs_AS_Roma,italy_serie-a,2016-08-28,21:45,Cagliari,AS Roma,2,2,2,2,6,9,6,8,4,3,18,11,3,1,0,0,3,1,15,19,3,3,3,2
+italy_serie-a_2016-09-10_Palermo_vs_Napoli,italy_serie-a,2016-09-10,21:45,Palermo,Napoli,0,3,0,4,1,8,0,8,2,4,11,7,0,0,0,0,4,1,19,19,3,3,4,1
+italy_serie-a_2016-09-16_Sampdoria_vs_AC_Milan,italy_serie-a,2016-09-16,21:45,Sampdoria,AC Milan,0,1,0,1,5,4,5,3,7,6,13,15,2,4,0,0,2,5,25,24,3,3,2,1
+italy_serie-a_2016-09-17_Napoli_vs_Bologna,italy_serie-a,2016-09-17,21:45,Napoli,Bologna,3,1,4,1,9,4,6,2,6,3,9,6,0,1,0,1,3,5,22,13,3,4,2,4
+italy_serie-a_2016-09-21_AS_Roma_vs_Crotone,italy_serie-a,2016-09-21,21:45,AS Roma,Crotone,4,0,4,0,11,7,7,4,11,5,10,5,0,1,0,0,1,5,9,18,3,4,1,5
+italy_serie-a_2016-10-15_Napoli_vs_AS_Roma,italy_serie-a,2016-10-15,16:00,Napoli,AS Roma,1,3,1,3,12,8,7,5,9,1,5,16,2,3,0,0,2,0,18,14,3,3,4,2
+italy_serie-a_2016-10-23_Crotone_vs_Napoli,italy_serie-a,2016-10-23,16:00,Crotone,Napoli,1,2,1,2,6,13,4,1,6,7,17,9,1,0,0,1,1,1,32,23,3,3,3,2
+italy_serie-a_2016-10-23_AS_Roma_vs_Palermo,italy_serie-a,2016-10-23,21:45,AS Roma,Palermo,4,1,4,1,8,6,4,1,3,4,11,13,3,2,0,0,2,1,24,26,3,3,2,5
+italy_serie-a_2016-10-25_Genoa_vs_AC_Milan,italy_serie-a,2016-10-25,21:45,Genoa,AC Milan,3,0,3,0,4,5,2,6,4,3,13,8,3,0,0,1,3,0,11,17,3,3,1,4
+italy_serie-a_2016-10-26_Napoli_vs_Empoli,italy_serie-a,2016-10-26,21:45,Napoli,Empoli,2,0,2,0,12,4,6,3,10,7,6,7,1,2,0,0,1,1,17,22,3,3,1,3
+italy_serie-a_2016-10-26_Sassuolo_vs_AS_Roma,italy_serie-a,2016-10-26,21:45,Sassuolo,AS Roma,1,3,1,3,4,10,8,7,4,11,12,9,3,0,0,0,0,3,16,12,3,3,4,2
+italy_serie-a_2016-10-30_AC_Milan_vs_Pescara,italy_serie-a,2016-10-30,17:00,AC Milan,Pescara,1,0,1,0,8,5,6,4,5,3,11,11,1,3,0,0,0,4,17,23,3,3,1,2
+italy_serie-a_2016-10-30_Empoli_vs_AS_Roma,italy_serie-a,2016-10-30,17:00,Empoli,AS Roma,0,0,0,0,3,13,5,8,4,7,17,13,6,3,0,0,0,4,17,25,3,3,1,1
+italy_serie-a_2016-11-06_Palermo_vs_AC_Milan,italy_serie-a,2016-11-06,17:00,Palermo,AC Milan,1,2,1,2,5,7,5,7,6,5,23,13,2,1,0,0,1,1,22,13,3,3,3,2
+italy_serie-a_2016-11-06_AS_Roma_vs_Bologna,italy_serie-a,2016-11-06,22:45,AS Roma,Bologna,3,0,3,0,9,6,9,4,3,6,15,8,1,0,0,0,0,2,25,20,3,3,1,4
+italy_serie-a_2016-11-20_AC_Milan_vs_Inter,italy_serie-a,2016-11-20,22:45,AC Milan,Inter,2,2,2,2,5,9,4,9,1,8,14,14,2,4,0,0,3,2,15,30,3,3,3,3
+italy_serie-a_2016-11-27_AS_Roma_vs_Pescara,italy_serie-a,2016-11-27,22:45,AS Roma,Pescara,3,2,3,2,10,10,6,5,8,6,21,19,3,3,0,0,3,1,15,19,3,3,3,4
+italy_serie-a_2016-12-04_AC_Milan_vs_Crotone,italy_serie-a,2016-12-04,14:30,AC Milan,Crotone,2,1,2,1,5,5,11,2,7,4,22,19,4,4,0,0,2,2,24,15,3,3,2,3
+italy_serie-a_2016-12-17_AC_Milan_vs_Atalanta,italy_serie-a,2016-12-17,20:00,AC Milan,Atalanta,0,0,0,0,4,5,6,7,5,3,23,29,3,6,0,0,2,0,16,18,3,3,1,1
+italy_serie-a_2016-12-22_AS_Roma_vs_Chievo,italy_serie-a,2016-12-22,22:45,AS Roma,Chievo,3,1,3,1,14,2,12,3,9,1,9,12,0,2,0,0,3,2,25,13,2,3,2,4
+italy_serie-a_2017-01-08_AC_Milan_vs_Cagliari,italy_serie-a,2017-01-08,20:00,AC Milan,Cagliari,1,0,1,0,13,4,12,4,10,2,5,12,0,1,0,1,4,3,19,25,3,3,1,2
+italy_serie-a_2017-01-15_Napoli_vs_Pescara,italy_serie-a,2017-01-15,17:00,Napoli,Pescara,3,1,3,2,15,3,8,4,6,2,11,14,1,3,0,0,2,5,12,16,3,2,1,4
+italy_serie-a_2017-01-15_Udinese_vs_AS_Roma,italy_serie-a,2017-01-15,17:00,Udinese,AS Roma,0,1,0,1,8,6,2,8,4,7,16,17,2,1,0,0,0,2,23,16,3,1,3,0
+italy_serie-a_2017-01-21_AC_Milan_vs_Napoli,italy_serie-a,2017-01-21,22:45,AC Milan,Napoli,1,2,1,2,3,5,9,3,7,1,14,14,4,4,0,0,3,3,17,18,2,3,3,2
+italy_serie-a_2017-02-04_Bologna_vs_Napoli,italy_serie-a,2017-02-04,22:45,Bologna,Napoli,1,7,1,7,8,11,4,3,3,0,13,9,2,3,1,1,1,2,9,15,3,3,7,2
+italy_serie-a_2017-02-10_Napoli_vs_Genoa,italy_serie-a,2017-02-10,22:45,Napoli,Genoa,2,0,2,0,8,3,6,3,12,3,6,11,1,2,0,0,1,0,24,24,3,3,1,3
+italy_serie-a_2017-02-12_Crotone_vs_AS_Roma,italy_serie-a,2017-02-12,14:30,Crotone,AS Roma,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

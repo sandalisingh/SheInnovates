@@ -4,6 +4,8 @@ from enum import Enum
 YOLO_MODEL_PATH = "Models/best_object_detection_model.pt"
 FORMATION_CLASSIFIER_PATH = "Models/knn_formation_model.pkl"
 FORMATIONS_INFO_DB = "Data/Formations_info_transformed.csv"
+COUNTER_FORMATION_PREDICTOR_PATH = "Models/counter_form_predictor.pkl"
+COUNTER_FORMATION_TARGET_LABEL_ENCODER_PATH = "Models/counter_form_target_label_encoder.pkl"
 
 # -------------------------- OBJECT DETECTION --------------------------
 
