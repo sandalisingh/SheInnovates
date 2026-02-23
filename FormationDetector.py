@@ -6,7 +6,7 @@ from scipy.optimize import linear_sum_assignment
 import joblib 
 import Configurations as CF
 
-def get_row_from_string(prediction_string):
+def get_info_for_formation(prediction_string):
     """Safely converts a string to a DB row using Enums"""
     if not isinstance(prediction_string, str):
         return prediction_string
@@ -19,25 +19,54 @@ def get_row_from_string(prediction_string):
     parts = prediction_string.split(" ")
     structure = parts[0]
     mode = CF.Mode.BALANCED.value
-    
+    shape = CF.Shape.NA.value
+
+    if(len(parts)==2):
+        mode = parts[1]
+    if(len(parts)==3):
+        shape = parts[1]
+        mode = parts[2]
+
     known_modes = [m.value for m in CF.Mode]
     for m in known_modes:
         if m in parts:
             mode = m
             parts.remove(m)
             break
-            
+
+    # match all structure, shape, mode            
     matches = db[
         (db["Structure"] == structure) &
-        (db["Mode"].astype(str).str.contains(mode, na=False))
+        (db["Mode"].astype(str).str.contains(mode, na=False)) &
+        (db["Shape"].astype(str).str.contains(shape, na=False))
+    ]
+    
+    if len(matches) > 0:
+        return matches.iloc[0]
+    
+    # match all structure, mode            
+    matches = db[
+        (db["Structure"] == structure) &
+        (db["Shape"].astype(str).str.contains(shape, na=False))
+    ]
+
+    if len(matches) > 0:
+        return matches.iloc[0]
+    
+    # match all structure, mode            
+    matches = db[
+        (db["Structure"] == structure) &
+        (db["Mode"].astype(str).str.contains(mode, na=False)) 
     ]
     
     if len(matches) > 0:
         return matches.iloc[0]
         
-    fallback = db[db["Structure"] == structure]
-    if len(fallback) > 0:
-        return fallback.iloc[0]
+    # just look for structure
+    matches = db[db["Structure"] == structure]
+
+    if len(matches) > 0:
+        return matches.iloc[0]
         
     return None
 

@@ -5,7 +5,7 @@ from scipy.spatial import Voronoi
 from shapely.geometry import Polygon as ShapelyPoly
 from shapely.geometry import box
 import pandas as pd
-from FormationDetector import FormationDetector, get_row_from_string
+from FormationDetector import FormationDetector, get_info_for_formation
 from TacticalAnalyzer import TacticalAnalyzer
 import Configurations as CF
 
@@ -264,8 +264,8 @@ class InteractiveVoronoiPitch:
         central_control = f"{CF.MY_TEAM_NAME} dominance" if center_h > center_a else f"{CF.OPPONENT_TEAM_NAME} dominance"
         overloads = f"{CF.MY_TEAM_NAME} creating overloads" if over_h > over_a else f"{CF.OPPONENT_TEAM_NAME} creating overloads"
 
-        home_row = get_row_from_string(self.home_form_str)
-        away_row = get_row_from_string(self.away_form_str)
+        home_row = get_info_for_formation(self.home_form_str)
+        away_row = get_info_for_formation(self.away_form_str)
         home_advice, counter_formations = self.tactical_anaylzer.tactical_advice_from_Information_Base(home_row, away_row)
 
         pad_x = 2

@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.spatial import Voronoi
 from shapely.geometry import Polygon, box
 import Configurations as CF
-from FormationDetector import get_row_from_string
+from FormationDetector import get_info_for_formation
 
 class TacticalAnalyzer:
     def __init__(self):
@@ -126,8 +126,8 @@ class TacticalAnalyzer:
         advice = []
         counter_formations = []
         
-        my_team_full_row = get_row_from_string(my_team_row)
-        opponent_full_row = get_row_from_string(opponent_row)
+        my_team_full_row = get_info_for_formation(my_team_row)
+        opponent_full_row = get_info_for_formation(opponent_row)
 
         if my_team_full_row is not None and isinstance(my_team_full_row, pd.Series):
              desc = my_team_full_row.get("Description", "")

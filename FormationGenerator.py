@@ -62,7 +62,7 @@ class FormationGenerator:
             CF.Role.Right_Striker: (5, 3),
         }
 
-    def build_template_from_csv_row(self, formation_row, mode=CF.Mode.BALANCED.value):
+    def build_template_from_roles(self, formation_row, mode=CF.Mode.BALANCED.value):
         if formation_row is None:
             raise ValueError(f"‼️ [ERROR] Formation row is empty!")
 
@@ -111,7 +111,7 @@ class FormationGenerator:
         return np.array(template, dtype=float)
 
     def compare_to_template(self, players, formation_row):
-        template = self.build_template_from_csv_row(formation_row)
+        template = self.build_template_from_roles(formation_row)
         if len(template) == 0:
             return 1e9
 
@@ -158,12 +158,15 @@ class FormationGenerator:
         return np.array(template, dtype=float)
     
     def generate_template_from_formation(self, formation_name, team_side="left", mode=CF.Mode.BALANCED.value):
-        from FormationDetector import get_row_from_string
+        from FormationDetector import get_info_for_formation
         
-        formation_row = get_row_from_string(formation_name)
+        formation_row = get_info_for_formation(formation_name)
+
+        # print("Detected formation:")
+        # print(formation_row)
         
         if formation_row is not None:
-            template = self.build_template_from_csv_row(formation_row, mode)
+            template = self.build_template_from_roles(formation_row, mode)
         else:
             template = self.build_template_from_formation_name(formation_name)
 

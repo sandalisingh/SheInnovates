@@ -110,7 +110,7 @@ class Shape(Enum):
 # -------------------------- PLAYER ROLES --------------------------
 
 class Role(Enum):
-    
+
     # Goalkeeper
     Goalkeeper = "GK"
 
@@ -156,3 +156,18 @@ class Role(Enum):
 
 ROLE_LIST = list(Role)
 ROLE_VALUE_LIST = list(r.value for r in Role)
+
+# ========================================== AMPUTEE FOOTBALL SPECIFICS ==========================================
+
+# Separate Paths
+FORMATION_CLASSIFIER_PATH_AMPUTEE = "Models/knn_formation_model_amputee.pkl"
+FORMATIONS_INFO_DB_AMPUTEE = "Data/Amputee_Formations_info.csv"
+
+# Amputee 7-a-side Formations
+class AmputeeFormation(Enum):
+    F_2_3_1   = "2-3-1"
+    F_3_2_1   = "3-2-1"
+    F_2_2_2   = "2-2-2"
+    F_1_3_2   = "1-3-2"
+    F_2_1_2_1 = "2-1-2-1"
+    F_1_4_1   = "1-4-1"
